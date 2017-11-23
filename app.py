@@ -187,14 +187,13 @@ def handle_text_message(event):
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
 ##    elif text == 'echo on' :
-##        echo_switch('on')
+##        echi_switch(on
 ##    else:
 ##        line_bot_api.reply_message(
 ##            event.reply_token, TextSendMessage(text=event.message.text))
 ##
 ##def echo_switch(settings) :
-##    if settings == 'on' :
-##        
+##    
 
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location_message(event):
@@ -242,9 +241,9 @@ def handle_content_message(event):
     line_bot_api.reply_message(
         event.reply_token, [
             TextSendMessage(text='Entering Storage\nPlease Wait'),
-            time.sleep(1)
+            time.sleep(1),
             TextSendMessage(text='Media has been saved'),
-            TextSendMessage(text='link : 'request.host_url + os.path.join('static', 'tmp', dist_name))
+            TextSendMessage(text='link : ' + request.host_url + os.path.join('static', 'tmp', dist_name))
         ])
 
 
