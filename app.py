@@ -183,7 +183,7 @@ def handle_text_message(event):
     elif text == 'imagemap':
         pass
     elif text == 'YoRHa' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Glory for Mankind'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
 ##    elif text == 'echo on' :
@@ -261,7 +261,9 @@ def handle_file_message(event):
 
     line_bot_api.reply_message(
         event.reply_token, [
-            TextSendMessage(text='Save file.'),
+            TextSendMessage(text='Entering Storage\nPlease Wait'),
+            time.sleep(1),
+            TextSendMessage(text='File has been saved'),
             TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
         ])
 
@@ -281,7 +283,7 @@ def handle_unfollow():
 def handle_join(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text='Joined this ' + event.source.type))
+        TextSendMessage(text='Hello :D') # + event.source.type)) return room / group
 
 
 @handler.add(LeaveEvent)
@@ -304,16 +306,12 @@ def handle_postback(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(
-            text='Got beacon event. hwid={}, device_message(hex string)={}'.format(
-                event.beacon.hwid, event.beacon.dm)))
+    line_bot_api.reply_message( event.reply_token,
+                                TextSendMessage(text='Got beacon event. hwid={}, device_message(hex string)={}'
+                                                .format(event.beacon.hwid, event.beacon.dm)))
     
 if __name__ == "__main__":
-    arg_parser = ArgumentParser(
-        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
-    )
+    arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
