@@ -114,7 +114,13 @@ def handle_text_message(event):
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Leaving group'))
+                event.reply_token,
+                TextMessage(text='Leaving group'),
+                ImageMessage(
+                    original_content_url=
+                    'https://lh4.googleusercontent.com/j_zU7SXKV7VLsUbfn8mz__DyjBi_y8nVGLd2_rDjWBHX79OmCAOmb4IdWmVIcPjdWkH58Gx1Oaa2IDxwqvUG=w1366-h695' ,
+                    preview_image_url='https://lh4.googleusercontent.com/j_zU7SXKV7VLsUbfn8mz__DyjBi_y8nVGLd2_rDjWBHX79OmCAOmb4IdWmVIcPjdWkH58Gx1Oaa2IDxwqvUG=w1366-h695'
+                    ))
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message(
