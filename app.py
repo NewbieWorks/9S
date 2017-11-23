@@ -283,7 +283,7 @@ def handle_unfollow():
 def handle_join(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text='Hello :D') # + event.source.type)) return room / group
+        TextSendMessage(text='Hello :D')) # + event.source.type)) return room / group
 
 
 @handler.add(LeaveEvent)
