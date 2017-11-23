@@ -70,22 +70,22 @@ def make_static_tmp_dir():
             raise
 
 
-##@app.route("/callback", methods=['POST'])
-##def callback():
-##    # get X-Line-Signature header value
-##    signature = request.headers['X-Line-Signature']
-##
-##    # get request body as text
-##    body = request.get_data(as_text=True)
-##    app.logger.info("Request body: " + body)
-##
-##    # handle webhook body
-##    try:
-##        handler.handle(body, signature)
-##    except InvalidSignatureError:
-##        abort(400)
-##
-##    return 'OK'
+@app.route("/callback", methods=['POST'])
+def callback():
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
+
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+
+    return 'OK'
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -177,9 +177,9 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'imagemap':
         pass
-    else:
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text=event.message.text))
+##    else:
+##        line_bot_api.reply_message(
+##            event.reply_token, TextSendMessage(text=event.message.text))
 
 
 @handler.add(MessageEvent, message=LocationMessage)
