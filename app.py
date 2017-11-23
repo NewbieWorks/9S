@@ -12,21 +12,33 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
+
 from __future__ import unicode_literals
 
+import errno
 import os
 import sys
+import tempfile
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
+
 from linebot import (
-    LineBotApi, WebhookParser
+    LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
+    SourceUser, SourceGroup, SourceRoom,
+    TemplateSendMessage, ConfirmTemplate, MessageTemplateAction,
+    ButtonsTemplate, ImageCarouselTemplate, ImageCarouselColumn, URITemplateAction,
+    PostbackTemplateAction, DatetimePickerTemplateAction,
+    CarouselTemplate, CarouselColumn, PostbackEvent,
+    StickerMessage, StickerSendMessage, LocationMessage, LocationSendMessage,
+    ImageMessage, VideoMessage, AudioMessage, FileMessage,
+    UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
 
 app = Flask(__name__)
@@ -42,7 +54,20 @@ if channel_access_token is None:
     sys.exit(1)
 
 line_bot_api = LineBotApi(channel_access_token)
-parser = WebhookParser(channel_secret)
+handler = WebhookHandler(channel_secret)
+
+static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
+
+
+# function for create tmp dir for download content
+def make_static_tmp_dir():
+    try:
+        os.makedirs(static_tmp_path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(static_tmp_path):
+            pass
+        else:
+            raise
 
 
 @app.route("/callback", methods=['POST'])
@@ -269,7 +294,6 @@ def handle_beacon(event):
         TextSendMessage(
             text='Got beacon event. hwid={}, device_message(hex string)={}'.format(
                 event.beacon.hwid, event.beacon.dm)))
-
     
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
