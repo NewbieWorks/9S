@@ -140,7 +140,16 @@ def handle_text_message(event):
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
-    
+    elif (text.split())[0] == 'sendto' :
+        lineID = (text.split())[1]
+        message = (text.split())[2]
+        try:
+            target = client._client.findContactByUserid(lineID)
+            c = LineContact(client, target)
+            c.sendMessage(message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Error'))
+            
     elif text == 'buttons':
         buttons_template = ButtonsTemplate(
             title='My buttons sample', text='Hello, my buttons', actions=[
