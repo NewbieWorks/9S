@@ -116,10 +116,11 @@ def handle_text_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextMessage(text='I\'ll be back ....'))
+            text_message = TextSendMessage(text='testers!')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Leaving group'))
+                event.reply_token, TextMessage(text='Fine'))
             line_bot_api.leave_room(event.source.room_id)
         else:
             line_bot_api.reply_message(
@@ -134,11 +135,12 @@ def handle_text_message(event):
         template_message = TemplateSendMessage(
             alt_text='''YoRHa's Request''', template=confirm_template)
         line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'view profiles' :
-        profile = line_bot_api.get_group_member_profile(group_id, user_id)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
+##    elif text == 'view profiles' :
+##        profile = line_bot_api.get_group_member_profile(group_id, user_id)
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
+    
     elif text == 'buttons':
         buttons_template = ButtonsTemplate(
             title='My buttons sample', text='Hello, my buttons', actions=[
