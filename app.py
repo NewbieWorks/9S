@@ -202,6 +202,21 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
+    elif text.lower() == ('hai' or 'hello' or 'pagi' or 'pagii' or 'malam' or 'siang') or ('selamat' in text.lower()) :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + 'juga :D'))
+    elif text == 'info' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
+                                                                      profile\n\
+                                                                      bye\n\
+                                                                      confirm (RAW)\n\
+                                                                      sendto (ERROR)\n\
+                                                                      buttons (RAW)\n\
+                                                                      carousel (RAW) \n\
+                                                                      image_carousel (RAW) \n\
+                                                                      imagemap (RAW) \n\
+                                                                      YoRHa \n\
+                                                                      @emi[L] \n\
+                                                                      info (Untested'))
 ##    elif text == 'echo on' :
 ##        echi_switch(on
 ##    else:
@@ -336,3 +351,4 @@ if __name__ == "__main__":
     make_static_tmp_dir()
     
     app.run(host='0.0.0.0', debug=options.debug, port=int(os.environ.get('PORT' , 5000)))
+
