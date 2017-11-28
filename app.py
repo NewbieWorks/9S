@@ -14,52 +14,7 @@
 
 
 
-
 from __future__ import unicode_literals
-
-
-
-def encript1(string) :
-    encr = dict()
-    medium = list()
-    
-    encr['a'] = 'd'
-    encr['s'] = 'f'
-    encr['d'] = 'g'
-    encr['f'] = 'h'
-    encr['g'] = 'j'
-    encr['h'] = 'k'
-    encr['j'] = 'l'
-    encr['k'] = 'a'
-    encr['l'] = 's'
-
-    encr['z'] = 'c'
-    encr['x'] = 'v'
-    encr['c'] = 'b'
-    encr['v'] = 'n'
-    encr['b'] = 'm'
-    encr['n'] = 'z'
-    encr['m'] = 'x'
-
-    encr['q'] = 'e'
-    encr['w'] = 'r'
-    encr['e'] = 't'
-    encr['r'] = 'y'
-    encr['t'] = 'u'
-    encr['y'] = 'i'
-    encr['u'] = 'o'
-    encr['i'] = 'p'
-    encr['o'] = 'q'
-    encr['p'] = 'w'    
-
-    encr[' '] = ' '
-    for char in raw :
-        proc = encr[char]
-        medium.append(proc)
-    res = ''.join(medium)
-    return res
-
-#--------------------------------------------------------------#
 
 
 import errno
@@ -246,8 +201,13 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'imagemap':
         pass
-    elif text.split()[0] == 'Ls' :
-        reply = encript1(text.split()[1:])
+    elif (text.split())[0] == 'Ls' :
+        raw = (text.split())[1:]
+        medium = ()
+        for char in raw :
+            proc = encr[char]
+            medium.append(proc)
+        reply = ''.join(medium)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
     elif text == 'YoRHa' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
@@ -392,6 +352,11 @@ def handle_beacon(event):
     line_bot_api.reply_message( event.reply_token,
                                 TextSendMessage(text='Got beacon event. hwid={}, device_message(hex string)={}'
                                                 .format(event.beacon.hwid, event.beacon.dm)))
+
+    
+
+
+
     
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
@@ -403,4 +368,36 @@ if __name__ == "__main__":
     make_static_tmp_dir()
     
     app.run(host='0.0.0.0', debug=options.debug, port=int(os.environ.get('PORT' , 5000)))
+
+    encr = dict()
+    encr['a'] = 'd'
+    encr['s'] = 'f'
+    encr['d'] = 'g'
+    encr['f'] = 'h'
+    encr['g'] = 'j'
+    encr['h'] = 'k'
+    encr['j'] = 'l'
+    encr['k'] = 'a'
+    encr['l'] = 's'
+
+    encr['z'] = 'c'
+    encr['x'] = 'v'
+    encr['c'] = 'b'
+    encr['v'] = 'n'
+    encr['b'] = 'm'
+    encr['n'] = 'z'
+    encr['m'] = 'x'
+
+    encr['q'] = 'e'
+    encr['w'] = 'r'
+    encr['e'] = 't'
+    encr['r'] = 'y'
+    encr['t'] = 'u'
+    encr['y'] = 'i'
+    encr['u'] = 'o'
+    encr['i'] = 'p'
+    encr['o'] = 'q'
+    encr['p'] = 'w'    
+
+    encr[' '] = ' '
 
