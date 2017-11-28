@@ -214,8 +214,8 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
-    elif text.lower() == ('hai' or 'hello' or 'pagi' or 'pagii' or 'malam' or 'siang') or ('selamat' in text.lower()) :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + 'juga :D'))
+    elif text.lower() in sapaan :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + ' juga :D'))
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
                                                                       profile\n\
@@ -354,9 +354,7 @@ def handle_beacon(event):
                                 TextSendMessage(text='Got beacon event. hwid={}, device_message(hex string)={}'
                                                 .format(event.beacon.hwid, event.beacon.dm)))
 
-    
-
-
+sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 
     
 if __name__ == "__main__":
@@ -370,6 +368,8 @@ if __name__ == "__main__":
     
     app.run(host='0.0.0.0', debug=options.debug, port=int(os.environ.get('PORT' , 5000)))
 
+    
+    
     encr = dict()
     encr['a'] = 'd'
     encr['s'] = 'f'
