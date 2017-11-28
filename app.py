@@ -202,6 +202,7 @@ def handle_text_message(event):
     elif text == 'imagemap':
         pass
     elif (text.split())[0] == 'Ls' :
+        global encr
         raw = (text.split())[1:]
         medium = ()
         for char in raw :
