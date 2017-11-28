@@ -214,7 +214,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
-    elif text.lower() in sapaan :
+    elif text.lower() in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + ' juga :D'))
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
