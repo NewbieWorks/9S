@@ -212,7 +212,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
     elif text == 'YoRHa' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
-        line_bot_api.reply_message(event.reply_token, ImageSendMessage(original_content_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg',preview_image_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg'))
+        ImageSendMessage(original_content_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg',preview_image_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg')
     elif text == '@emi[L]' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
     elif text.lower() in sapaan or 'selamat' in text.lower().split() :
