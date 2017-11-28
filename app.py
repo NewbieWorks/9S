@@ -19,6 +19,7 @@ import errno
 import os
 import sys
 import tempfile
+import Ls encription as L
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -198,6 +199,9 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'imagemap':
         pass
+    elif text.split()[0] == 'Ls' :
+        reply = L.encript1(text.split()[1:])
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
     elif text == 'YoRHa' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text == '@emi[L]' :
@@ -216,7 +220,8 @@ def handle_text_message(event):
                                                                       imagemap (RAW) \n\
                                                                       YoRHa \n\
                                                                       @emi[L] \n\
-                                                                      info (Untested'))
+                                                                      info \n\
+                                                                      and Other Things'))
 ##    elif text == 'echo on' :
 ##        echi_switch(on
 ##    else:
