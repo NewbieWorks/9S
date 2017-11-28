@@ -202,10 +202,10 @@ def handle_text_message(event):
     elif text == 'imagemap':
         pass
     elif (text.split())[0] == 'Ls' :
-        global encr
         raw = (text.split())[1:]
+        raw_str = ' '.join(raw)
         medium = ()
-        for char in raw :
+        for char in raw_str :
             proc = encr[char]
             medium.append(proc)
         reply = ''.join(medium)
@@ -356,6 +356,37 @@ def handle_beacon(event):
 
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 
+encr = dict()
+encr['a'] = 'd'
+encr['s'] = 'f'
+encr['d'] = 'g'
+encr['f'] = 'h'
+encr['g'] = 'j'
+encr['h'] = 'k'
+encr['j'] = 'l'
+encr['k'] = 'a'
+encr['l'] = 's'
+
+encr['z'] = 'c'
+encr['x'] = 'v'
+encr['c'] = 'b'
+encr['v'] = 'n'
+encr['b'] = 'm'
+encr['n'] = 'z'
+encr['m'] = 'x'
+
+encr['q'] = 'e'
+encr['w'] = 'r'
+encr['e'] = 't'
+encr['r'] = 'y'
+encr['t'] = 'u'
+encr['y'] = 'i'
+encr['u'] = 'o'
+encr['i'] = 'p'
+encr['o'] = 'q'
+encr['p'] = 'w'    
+
+encr[' '] = ' '
     
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
@@ -370,35 +401,4 @@ if __name__ == "__main__":
 
     
     
-    encr = dict()
-    encr['a'] = 'd'
-    encr['s'] = 'f'
-    encr['d'] = 'g'
-    encr['f'] = 'h'
-    encr['g'] = 'j'
-    encr['h'] = 'k'
-    encr['j'] = 'l'
-    encr['k'] = 'a'
-    encr['l'] = 's'
-
-    encr['z'] = 'c'
-    encr['x'] = 'v'
-    encr['c'] = 'b'
-    encr['v'] = 'n'
-    encr['b'] = 'm'
-    encr['n'] = 'z'
-    encr['m'] = 'x'
-
-    encr['q'] = 'e'
-    encr['w'] = 'r'
-    encr['e'] = 't'
-    encr['r'] = 'y'
-    encr['t'] = 'u'
-    encr['y'] = 'i'
-    encr['u'] = 'o'
-    encr['i'] = 'p'
-    encr['o'] = 'q'
-    encr['p'] = 'w'    
-
-    encr[' '] = ' '
 
