@@ -118,7 +118,7 @@ def handle_text_message(event):
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(
                 event.reply_token,
-                TextMessage(text='I\'ll be back ....'))
+                TextMessage(text='I\'ll be back ....'), ImageMessage(original_content_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg',preview_image_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg')
             text_message = TextSendMessage(text='testers!')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
