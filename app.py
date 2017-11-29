@@ -95,7 +95,9 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
-
+    text = text.lower()
+    text_split=text.split()
+    
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
@@ -143,16 +145,15 @@ def handle_text_message(event):
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
-    elif (text.split())[0] == 'sendto' :
-        lineID = (text.split())[1]
-        message = (text.split())[2]
-        try:
-            target = client._client.findContactByUserid(lineID)
-            c = LineContact(client, target)
-            c.sendMessage(message)
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Error'))
-            
+##    elif (text.split())[0] == 'sendto' :
+##        lineID = (text.split())[1]
+##        message = (text.split())[2]
+##        try:
+##            target = client._client.findContactByUserid(lineID)
+##            c = LineContact(client, target)
+##            c.sendMessage(message)
+##        except:
+##            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Error'))
     elif text == 'buttons':
         buttons_template = ButtonsTemplate(
             title='My buttons sample', text='Hello, my buttons', actions=[
@@ -201,8 +202,8 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
     elif text == 'imagemap':
         pass
-    elif (text.split())[0] == 'Ls' :
-        raw = (text.split())[1:]
+    elif text_split[0] == 'Ls' :
+        raw = text_split[1]
         raw_str = ' '.join(raw)
         medium = ()
         for char in raw_str :
@@ -212,25 +213,21 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
     elif text == 'YoRHa' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
-        ImageSendMessage(original_content_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg',preview_image_url='https://3.bp.blogspot.com/-8gsgXIJHWsE/Wh0ZuAOiNRI/AAAAAAAAFuI/Ce8qUtGlzssfG8Z84AYRMHDJf8qZaLalgCLcBGAs/s1600/1.jpg')
-    elif text == '@emi[L]' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
-    elif text.lower() in sapaan or 'selamat' in text.lower().split() :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + ' juga :D'))
+    elif text in sapaan or 'selamat' in text.lower().split() :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
+    elif text == 'decript' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=' er ... nama mu ? '))
+    elif 'cassie' in text_split and len(text_split) == 1 :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Hai Cassie :) ...'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Lupain kode nya yah :D'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='9S juga belum selesai dibuat, jadi, semua pesan yang lain belum bisa diproses '))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='aku kasi Clue tambahan deh \nClue #2 : Qwerty'))
     elif text == 'info' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
-                                                                      profile\n\
-                                                                      bye\n\
-                                                                      confirm (RAW)\n\
-                                                                      sendto (ERROR)\n\
-                                                                      buttons (RAW)\n\
-                                                                      carousel (RAW) \n\
-                                                                      image_carousel (RAW) \n\
-                                                                      imagemap (RAW) \n\
-                                                                      YoRHa \n\
-                                                                      @emi[L] \n\
-                                                                      info \n\
-                                                                      and Other Things'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
+    else :
+        a = open('newstr.txt','a')
+        print(text, file=a)
+        a.close()
 ##    elif text == 'echo on' :
 ##        echi_switch(on
 ##    else:
@@ -292,25 +289,25 @@ def handle_text_message(event):
 ##        ])
 ##
 ##
-##@handler.add(MessageEvent, message=FileMessage)
-##def handle_file_message(event):
-##    message_content = line_bot_api.get_message_content(event.message.id)
-##    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix='file-', delete=False) as tf:
-##        for chunk in message_content.iter_content():
-##            tf.write(chunk)
-##        tempfile_path = tf.name
-##
-##    dist_path = tempfile_path + '-' + event.message.file_name
-##    dist_name = os.path.basename(dist_path)
-##    os.rename(tempfile_path, dist_path)
-##
-##    line_bot_api.reply_message(
-##        event.reply_token, [
-##            TextSendMessage(text='Entering Storage\nPlease Wait'),
-##            time.sleep(1),
-##            TextSendMessage(text='File has been saved'),
-##            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
-##        ])
+@handler.add(MessageEvent, message=FileMessage)
+def handle_file_message(event):
+    message_content = line_bot_api.get_message_content(event.message.id)
+    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix='file-', delete=False) as tf:
+        for chunk in message_content.iter_content():
+            tf.write(chunk)
+        tempfile_path = tf.name
+
+    dist_path = tempfile_path + '-' + event.message.file_name
+    dist_name = os.path.basename(dist_path)
+    os.rename(tempfile_path, dist_path)
+
+    line_bot_api.reply_message(
+        event.reply_token, [
+            TextSendMessage(text='Entering Storage\nPlease Wait'),
+            time.sleep(1),
+            TextSendMessage(text='File has been saved'),
+            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
+        ])
 ##
 ##
 ##@handler.add(FollowEvent)
