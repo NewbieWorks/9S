@@ -165,8 +165,7 @@ def handle_text_message(event):
                     text='ping'),
                 MessageTemplateAction(label='Translate Rice', text='米')
             ])
-        template_message = TemplateSendMessage(
-            alt_text='''YoRHa's Request''', template=buttons_template)
+        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
         
     elif text == 'carousel':
@@ -218,16 +217,15 @@ def handle_text_message(event):
     elif text == 'decript' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=' er ... nama mu ? '))
     elif 'cassie' in text_split and len(text_split) == 1 :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Hai Cassie :) ...'))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Lupain kode nya yah :D'))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='9S juga belum selesai dibuat, jadi, semua pesan yang lain belum bisa diproses '))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='aku kasi Clue tambahan deh \nClue #2 : Qwerty'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Hai Cassie :) ...\nLupain kode nya yah :D\n9S juga belum selesai dibuat, jadi, semua pesan yang lain belum bisa diproses\naku kasi Clue tambahan deh \nClue #2 : Qwerty'))
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
     else :
         a = open('newstr.txt','a')
-        print(text, file=a)
+        a.write(text)
         a.close()
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='reported'))
+
 ##    elif text == 'echo on' :
 ##        echi_switch(on
 ##    else:
