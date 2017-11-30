@@ -43,7 +43,7 @@ from linebot.models import (
     ImageMessage, VideoMessage, AudioMessage, FileMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
-import time
+
 
 app = Flask(__name__)
 
@@ -125,7 +125,7 @@ def handle_text_message(event):
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Fine'))
+                event.reply_token, TextMessage(text='Fine') )
             line_bot_api.leave_room(event.source.room_id)
         else:
             line_bot_api.reply_message(
@@ -145,15 +145,7 @@ def handle_text_message(event):
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
 ##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
-##    elif (text.split())[0] == 'sendto' :
-##        lineID = (text.split())[1]
-##        message = (text.split())[2]
-##        try:
-##            target = client._client.findContactByUserid(lineID)
-##            c = LineContact(client, target)
-##            c.sendMessage(message)
-##        except:
-##            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Error'))
+
     elif text == 'buttons':
         buttons_template = ButtonsTemplate(
             title='My buttons sample', text='Hello, my buttons', actions=[
@@ -221,10 +213,12 @@ def handle_text_message(event):
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
     else :
-        a = open('newstr.txt','a')
-        a.write(text)
-        a.close()
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='reported'))
+        try :
+            target = client._client.findContactByUserid('evohacker')
+            c = LineContact(client, target)
+            c.sendMessage(text)
+        except:
+            ine_bot_api.reply_message(event.reply_token, TextSendMessage(text=' '))
 
 ##    elif text == 'echo on' :
 ##        echi_switch(on
