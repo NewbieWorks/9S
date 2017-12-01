@@ -206,6 +206,8 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
+    elif text == 'test summon':
+         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='@niken'))
     elif text == 'decript' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=' er ... nama mu ? '))
     elif 'cassie' in text_split and len(text_split) == 1 :
