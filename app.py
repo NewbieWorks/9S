@@ -206,12 +206,22 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
-    elif text == 'test summon':
-         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='@niken'))
-    elif text == 'decript' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=' er ... nama mu ? '))
-    elif 'cassie' in text_split and len(text_split) == 1 :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Hai Cassie :) ...\nLupain kode nya yah :D\n9S juga belum selesai dibuat, jadi, semua pesan yang lain belum bisa diproses\naku kasi Clue tambahan deh \nClue #2 : Qwerty'))
+    elif text[:len('/getTitle')] == '/getTitle':
+        
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Processing'))
+        
+        galnum = text[len('/getTitle')+1:text.find(')')]
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part1 done'))
+        url = 'https://hitomi.la/galleries/{}.html'.format(galnum)
+
+        response = u.urlopen(url)
+        webContent = response.read()
+
+        key = '''<a href="/reader/{}.html">'''.format(galnum)
+        title = webContent[webContent.find(key):webContent.find('</a>', webContent.find(key))]
+
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=title))
+        
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
     else :
