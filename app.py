@@ -218,6 +218,14 @@ def handle_text_message(event):
     elif text == 'time' :
         now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
+
+    elif text[0] == 'c' and text[1] == ':' and isinstance(event.source, SourceGroup) :
+        global kumpul
+        kumpul.append(text[2:])
+
+    elif text == 'release' and isinstance(event.source, SourceUser) :
+        global kumpul
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kumpul[-1]))
         
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
@@ -231,78 +239,81 @@ def handle_text_message(event):
         elif str(datetime.now(pytz.utc).minute) == '5' :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
 
-@handler.add(MessageEvent, message=LocationMessage)
-def handle_location_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        LocationSendMessage(
-            title=event.message.title, address=event.message.address,
-            latitude=event.message.latitude, longitude=event.message.longitude
-        )
-    )
 
+            
 
-@handler.add(MessageEvent, message=StickerMessage)
-def handle_sticker_message(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        StickerSendMessage(
-            package_id=event.message.package_id,
-            sticker_id=event.message.sticker_id)
-    )
-
-
-# Other Message Type
-@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
-def handle_content_message(event):
-    if isinstance(event.message, ImageMessage):
-        ext = 'jpg'
-    elif isinstance(event.message, VideoMessage):
-        ext = 'mp4'
-    elif isinstance(event.message, AudioMessage):
-        ext = 'm4a'
-    else:
-        return
-
-    message_content = line_bot_api.get_message_content(event.message.id)
-    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-        for chunk in message_content.iter_content():
-            tf.write(chunk)
-        tempfile_path = tf.name
-
-    dist_path = tempfile_path + '.' + ext
-    dist_name = os.path.basename(dist_path)
-    os.rename(tempfile_path, dist_path)
-
-    line_bot_api.reply_message(
-        event.reply_token, [
-            TextSendMessage(text='Entering Storage\nPlease Wait'),
-            time.sleep(1),
-            TextSendMessage(text='Media has been saved'),
-            TextSendMessage(text='link : ' + request.host_url + os.path.join('static', 'tmp', dist_name))
-        ])
-
-
-@handler.add(MessageEvent, message=FileMessage)
-def handle_file_message(event):
-    message_content = line_bot_api.get_message_content(event.message.id)
-    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix='file-', delete=False) as tf:
-        for chunk in message_content.iter_content():
-            tf.write(chunk)
-        tempfile_path = tf.name
-
-    dist_path = tempfile_path + '-' + event.message.file_name
-    dist_name = os.path.basename(dist_path)
-    os.rename(tempfile_path, dist_path)
-
-    line_bot_api.reply_message(
-        event.reply_token, [
-            TextSendMessage(text='Entering Storage\nPlease Wait'),
-            time.sleep(1),
-            TextSendMessage(text='File has been saved'),
-            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
-        ])
-
+##@handler.add(MessageEvent, message=LocationMessage)
+##def handle_location_message(event):
+##    line_bot_api.reply_message(
+##        event.reply_token,
+##        LocationSendMessage(
+##            title=event.message.title, address=event.message.address,
+##            latitude=event.message.latitude, longitude=event.message.longitude
+##        )
+##    )
+##
+##
+##@handler.add(MessageEvent, message=StickerMessage)
+##def handle_sticker_message(event):
+##    line_bot_api.reply_message(
+##        event.reply_token,
+##        StickerSendMessage(
+##            package_id=event.message.package_id,
+##            sticker_id=event.message.sticker_id)
+##    )
+##
+##
+### Other Message Type
+##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
+##def handle_content_message(event):
+##    if isinstance(event.message, ImageMessage):
+##        ext = 'jpg'
+##    elif isinstance(event.message, VideoMessage):
+##        ext = 'mp4'
+##    elif isinstance(event.message, AudioMessage):
+##        ext = 'm4a'
+##    else:
+##        return
+##
+##    message_content = line_bot_api.get_message_content(event.message.id)
+##    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+##        for chunk in message_content.iter_content():
+##            tf.write(chunk)
+##        tempfile_path = tf.name
+##
+##    dist_path = tempfile_path + '.' + ext
+##    dist_name = os.path.basename(dist_path)
+##    os.rename(tempfile_path, dist_path)
+##
+##    line_bot_api.reply_message(
+##        event.reply_token, [
+##            TextSendMessage(text='Entering Storage\nPlease Wait'),
+##            time.sleep(1),
+##            TextSendMessage(text='Media has been saved'),
+##            TextSendMessage(text='link : ' + request.host_url + os.path.join('static', 'tmp', dist_name))
+##        ])
+##
+##
+##@handler.add(MessageEvent, message=FileMessage)
+##def handle_file_message(event):
+##    message_content = line_bot_api.get_message_content(event.message.id)
+##    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix='file-', delete=False) as tf:
+##        for chunk in message_content.iter_content():
+##            tf.write(chunk)
+##        tempfile_path = tf.name
+##
+##    dist_path = tempfile_path + '-' + event.message.file_name
+##    dist_name = os.path.basename(dist_path)
+##    os.rename(tempfile_path, dist_path)
+##
+##    line_bot_api.reply_message(
+##        event.reply_token, [
+##            TextSendMessage(text='Entering Storage\nPlease Wait'),
+##            time.sleep(1),
+##            TextSendMessage(text='File has been saved'),
+##            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
+##        ])
+##
 
 @handler.add(FollowEvent)
 def handle_follow(event):
@@ -349,7 +360,7 @@ def handle_beacon(event):
 
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
-    
+kumpul = []
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
