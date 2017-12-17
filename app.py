@@ -226,7 +226,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
-        if text in profile :
+        if text in profile.display_name :
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
                                          TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
