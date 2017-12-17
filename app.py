@@ -45,7 +45,8 @@ from linebot.models import (
 )
 
 from time import gmtime, strftime
-
+import pytz
+from datetime import datetime
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
@@ -218,7 +219,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
 
     elif text == 'time' :
-        now = strftime("%Y-%m-%d %H:%M:%S")
+        now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
         
     else :
