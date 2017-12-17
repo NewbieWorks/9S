@@ -198,11 +198,14 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
         
     elif text == 'echo switch':
+        global echo
         if echo :
             echo = False
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo Off'))
         else :
             echo = True
-            
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
+
     elif echo :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text))     
             
@@ -347,38 +350,7 @@ def handle_beacon(event):
                                                 .format(event.beacon.hwid, event.beacon.dm)))
 
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
-
-encr = dict()
-encr['a'] = 'd'
-encr['s'] = 'f'
-encr['d'] = 'g'
-encr['f'] = 'h'
-encr['g'] = 'j'
-encr['h'] = 'k'
-encr['j'] = 'l'
-encr['k'] = 'a'
-encr['l'] = 's'
-
-encr['z'] = 'c'
-encr['x'] = 'v'
-encr['c'] = 'b'
-encr['v'] = 'n'
-encr['b'] = 'm'
-encr['n'] = 'z'
-encr['m'] = 'x'
-
-encr['q'] = 'e'
-encr['w'] = 'r'
-encr['e'] = 't'
-encr['r'] = 'y'
-encr['t'] = 'u'
-encr['y'] = 'i'
-encr['u'] = 'o'
-encr['i'] = 'p'
-encr['o'] = 'q'
-encr['p'] = 'w'    
-
-encr[' '] = ' '
+echo = False
     
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
