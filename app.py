@@ -44,6 +44,7 @@ from linebot.models import (
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
 
+from time import gmtime, strftime
 
 app = Flask(__name__)
 
@@ -133,11 +134,12 @@ def handle_text_message(event):
         template_message = TemplateSendMessage(
             alt_text='''YoRHa's Request''', template=confirm_template)
         line_bot_api.reply_message(event.reply_token, template_message)
-##    elif text == 'view profiles' :
-##        profile = line_bot_api.get_group_member_profile(group_id, user_id)
-##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
-##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
-##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
+        
+    elif text == 'view profiles' :
+        profile = line_bot_api.get_group_member_profile(group_id, user_id)
+        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=profile.display_name),
+                                                       TextSendMessage(text=profile.user_id),
+                                                       TextSendMessage(text=profile.picture_url)])
 
     elif text == 'buttons':
         buttons_template = ButtonsTemplate(
@@ -215,6 +217,10 @@ def handle_text_message(event):
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
 
+    elif text == 'time' :
+        now = strftime("%Y-%m-%d %H:%M:%S")
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
+        
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
         if text in profile.display_name :
@@ -225,15 +231,6 @@ def handle_text_message(event):
 
     
 
-##    elif text == 'echo on' :
-##        echi_switch(on
-##    else:
-##        line_bot_api.reply_message(
-##            event.reply_token, TextSendMessage(text=event.message.text))
-##
-##def echo_switch(settings) :
-##    
-##
 ##@handler.add(MessageEvent, message=LocationMessage)
 ##def handle_location_message(event):
 ##    line_bot_api.reply_message(
