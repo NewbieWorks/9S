@@ -101,16 +101,9 @@ def handle_text_message(event):
     if text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
-            line_bot_api.reply_message(
-                event.reply_token, [
-                    TextSendMessage(
-                        text='Display Name: ' + profile.display_name
-                    ),
-                    TextSendMessage(
-                        text='Status : ' + profile.status_message
-                    )
-                ]
-            )
+            line_bot_api.reply_message(  event.reply_token,
+                                        [TextSendMessage( text='Display Name: ' + profile.display_name    ),
+                                         TextSendMessage( text='Status : '      + profile.status_message  )] )
         else:
             line_bot_api.reply_message(
                 event.reply_token,
@@ -202,8 +195,8 @@ def handle_text_message(event):
             medium.append(proc)
         reply = ''.join(medium)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
-    elif text == 'YoRHa' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
+        
+            
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
     elif text_split[0] == 'L':
@@ -226,19 +219,19 @@ def handle_text_message(event):
                 except KeyError :
                     return string[0] + LenCrypt(string[1:])
 
-        string = ' '.join(text_split[1:])
         replya = LenCrypt(string)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replya))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=LenCrypt(' '.join(text_split[1:]))))
         
     elif text == 'info' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
     else :
-        try :
-            target = client._client.findContactByUserid('evohacker')
-            c = LineContact(client, target)
-            c.sendMessage(text)
-        except:
-            ine_bot_api.reply_message(event.reply_token, TextSendMessage(text=' '))
+        profile = line_bot_api.get_profile(event.source.user_id)
+        if text in profile :
+            line_bot_api.reply_message(  event.reply_token,
+                                        [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
+                                         TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
+                                         TextSendMessage( text='Jadi maaf, aku gak punya perintah lain selain yang ada di /info'  )] )
+
 
 ##    elif text == 'echo on' :
 ##        echi_switch(on
