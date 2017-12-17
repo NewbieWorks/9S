@@ -224,7 +224,7 @@ def handle_text_message(event):
         kumpul.append(text[2:])
 
     elif text == 'release' and isinstance(event.source, SourceUser) :
-        global kumpul
+
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kumpul[-1]))
         
     else :
