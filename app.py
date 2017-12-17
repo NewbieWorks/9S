@@ -47,6 +47,7 @@ from linebot.models import (
 from time import gmtime, strftime
 import pytz
 from datetime import datetime
+
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
@@ -113,27 +114,23 @@ def handle_text_message(event):
             
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextMessage(text='I\'ll be back ....'))
+            line_bot_api.reply_message(event.reply_token,
+                                       TextMessage(text='I\'ll be back ....'))
             text_message = TextSendMessage(text='testers!')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message(
-                event.reply_token, TextMessage(text='Fine') )
+            line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine') )
             line_bot_api.leave_room(event.source.room_id)
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextMessage(text="Leave me yourself"))
+            line_bot_api.reply_message( event.reply_token,
+                                        TextMessage(text="Leave me yourself"))
             
     elif text == 'confirm':
-        confirm_template = ConfirmTemplate(text='Do it?', actions=[
-            MessageTemplateAction(label='Yes', text='Yes!'),
-            MessageTemplateAction(label='No', text='No!'),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='''YoRHa's Request''', template=confirm_template)
+        confirm_template = ConfirmTemplate(text='Do it?',
+                                           actions=[MessageTemplateAction(label='Yes', text='Yes!'),
+                                                    MessageTemplateAction(label='No', text='No!'), ])
+        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''',
+                                               template=confirm_template)
         line_bot_api.reply_message(event.reply_token, template_message)
         
     elif text == 'view profiles' :
@@ -225,66 +222,67 @@ def handle_text_message(event):
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
         if text in profile.display_name :
-            line_bot_api.reply_message(  event.reply_token,
-                                        [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
-                                         TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
-                                         TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
+            if isinstance(event.source, SourceUser):
+                line_bot_api.reply_message(  event.reply_token,
+                                            [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
+                                             TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
+                                             TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
 
         elif str(datetime.now(pytz.utc).minute) == '5' :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
 
-##@handler.add(MessageEvent, message=LocationMessage)
-##def handle_location_message(event):
-##    line_bot_api.reply_message(
-##        event.reply_token,
-##        LocationSendMessage(
-##            title=event.message.title, address=event.message.address,
-##            latitude=event.message.latitude, longitude=event.message.longitude
-##        )
-##    )
-##
-##
-##@handler.add(MessageEvent, message=StickerMessage)
-##def handle_sticker_message(event):
-##    line_bot_api.reply_message(
-##        event.reply_token,
-##        StickerSendMessage(
-##            package_id=event.message.package_id,
-##            sticker_id=event.message.sticker_id)
-##    )
-##
-##
-### Other Message Type
-##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
-##def handle_content_message(event):
-##    if isinstance(event.message, ImageMessage):
-##        ext = 'jpg'
-##    elif isinstance(event.message, VideoMessage):
-##        ext = 'mp4'
-##    elif isinstance(event.message, AudioMessage):
-##        ext = 'm4a'
-##    else:
-##        return
-##
-##    message_content = line_bot_api.get_message_content(event.message.id)
-##    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-##        for chunk in message_content.iter_content():
-##            tf.write(chunk)
-##        tempfile_path = tf.name
-##
-##    dist_path = tempfile_path + '.' + ext
-##    dist_name = os.path.basename(dist_path)
-##    os.rename(tempfile_path, dist_path)
-##
-##    line_bot_api.reply_message(
-##        event.reply_token, [
-##            TextSendMessage(text='Entering Storage\nPlease Wait'),
-##            time.sleep(1),
-##            TextSendMessage(text='Media has been saved'),
-##            TextSendMessage(text='link : ' + request.host_url + os.path.join('static', 'tmp', dist_name))
-##        ])
-##
-##
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_location_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        LocationSendMessage(
+            title=event.message.title, address=event.message.address,
+            latitude=event.message.latitude, longitude=event.message.longitude
+        )
+    )
+
+
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_sticker_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        StickerSendMessage(
+            package_id=event.message.package_id,
+            sticker_id=event.message.sticker_id)
+    )
+
+
+# Other Message Type
+@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
+def handle_content_message(event):
+    if isinstance(event.message, ImageMessage):
+        ext = 'jpg'
+    elif isinstance(event.message, VideoMessage):
+        ext = 'mp4'
+    elif isinstance(event.message, AudioMessage):
+        ext = 'm4a'
+    else:
+        return
+
+    message_content = line_bot_api.get_message_content(event.message.id)
+    with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+        for chunk in message_content.iter_content():
+            tf.write(chunk)
+        tempfile_path = tf.name
+
+    dist_path = tempfile_path + '.' + ext
+    dist_name = os.path.basename(dist_path)
+    os.rename(tempfile_path, dist_path)
+
+    line_bot_api.reply_message(
+        event.reply_token, [
+            TextSendMessage(text='Entering Storage\nPlease Wait'),
+            time.sleep(1),
+            TextSendMessage(text='Media has been saved'),
+            TextSendMessage(text='link : ' + request.host_url + os.path.join('static', 'tmp', dist_name))
+        ])
+
+
 @handler.add(MessageEvent, message=FileMessage)
 def handle_file_message(event):
     message_content = line_bot_api.get_message_content(event.message.id)
@@ -304,18 +302,18 @@ def handle_file_message(event):
             TextSendMessage(text='File has been saved'),
             TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
         ])
-##
-##
-##@handler.add(FollowEvent)
-##def handle_follow(event):
-##    line_bot_api.reply_message(
-##        event.reply_token, TextSendMessage(text='Got follow event'))
-##
-##
-##@handler.add(UnfollowEvent)
-##def handle_unfollow():
-##    app.logger.info("Got Unfollow event")
-##
+
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+    line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text='Got follow event'))
+
+
+@handler.add(UnfollowEvent)
+def handle_unfollow():
+    app.logger.info("Got Unfollow event")
+
 
 @handler.add(JoinEvent)
 def handle_join(event):
