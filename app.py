@@ -154,84 +154,73 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
         
     elif text == 'carousel':
-        carousel_template = CarouselTemplate(columns=[
-            CarouselColumn(text='hoge1', title='fuga1', actions=[
-                URITemplateAction(
-                    label='Go to line.me', uri='https://line.me'),
-                PostbackTemplateAction(label='ping', data='ping')
-            ]),
-            CarouselColumn(text='hoge2', title='fuga2', actions=[
-                PostbackTemplateAction(
-                    label='ping with text', data='ping',
-                    text='ping'),
-                MessageTemplateAction(label='Translate Rice', text='米')
-            ]),
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='Carousel alt text', template=carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'image_carousel':
-        image_carousel_template = ImageCarouselTemplate(columns=[
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerTemplateAction(label='datetime',
-                                                                    data='datetime_postback',
-                                                                    mode='datetime')),
-            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
-                                action=DatetimePickerTemplateAction(label='date',
-                                                                    data='date_postback',
-                                                                    mode='date'))
-        ])
-        template_message = TemplateSendMessage(
-            alt_text='ImageCarousel alt text', template=image_carousel_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-    elif text == 'imagemap':
-        pass
-    elif text_split[0] == 'Ls' :
-        raw = text_split[1]
-        raw_str = ' '.join(raw)
-        medium = ()
-        for char in raw_str :
-            proc = encr[char]
-            medium.append(proc)
-        reply = ''.join(medium)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
+        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
+                                                                     title='fuga1',
+                                                                     actions=[URITemplateAction(label='Go to line.me' ,
+                                                                                                uri='https://line.me'),
+                                                                              PostbackTemplateAction(label='ping',
+                                                                                                     data='ping')   ]
+                                                                     ),
+                                                      CarouselColumn(text='hoge2',
+                                                                     title='fuga2',
+                                                                     actions=[PostbackTemplateAction(label='ping with text',
+                                                                                                     data='ping',
+                                                                                                     text='ping'),
+                                                                              MessageTemplateAction(label='Translate Rice',
+                                                                                                    text='米')]),])
+        template_message = TemplateSendMessage(alt_text='Carousel alt text',
+                                               template=carousel_template)
         
+        line_bot_api.reply_message(event.reply_token, template_message)
+        
+    elif text == 'image_carousel':
+        image_carousel_template = ImageCarouselTemplate(columns=
+                                                            [ImageCarouselColumn
+                                                                (image_url='https://via.placeholder.com/1024x1024',
+                                                                 action=DatetimePickerTemplateAction
+                                                                    (label='datetime',
+                                                                     data='datetime_postback',
+                                                                     mode='datetime')
+                                                                 ) ,
+                                                             ImageCarouselColumn
+                                                                (image_url='https://via.placeholder.com/1024x1024',
+                                                                 action=DatetimePickerTemplateAction
+                                                                    (label='date',
+                                                                     data='date_postback',
+                                                                     mode='date')
+                                                                 )
+                                                             ]
+                                                        )
+
+        template_message = TemplateSendMessage(alt_text='ImageCarousel alt text',
+                                               template=image_carousel_template)
+        
+        line_bot_api.reply_message(event.reply_token, template_message)
+        
+    elif text == 'echo switch':
+        if echo :
+            echo = False
+        else :
+            echo = True
+            
+    elif echo :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text))     
             
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
-    elif text_split[0] == 'L':
-        
-        def LenCrypt(string) :
-            L = {'a': 'd', 's': 'f', 'd': 'g', 'f': 'h', 'g': 'j', 'h': 'k',
-                 'j': 'l', 'k': 'a', 'l': 's', 'z': 'c', 'x': 'v', 'c': 'b',
-                 'v': 'n', 'b': 'm', 'n': 'z', 'm': 'x', 'q': 'e', 'w': 'r',
-                 'e': 't', 'r': 'y', 't': 'u', 'y': 'i', 'u': 'o', 'i': 'p',
-                 'o': 'q', 'p': 'w', '.': '\n'}
-            
-            if len(string) == 1:
-                try :
-                    return L[string]
-                except KeyError :
-                    return string
-            else :
-                try :
-                    return L[string[0]] + LenCrypt(string[1:])
-                except KeyError :
-                    return string[0] + LenCrypt(string[1:])
-
-        replya = LenCrypt(string)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=LenCrypt(' '.join(text_split[1:]))))
-        
+                
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
+
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
         if text in profile.display_name :
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
                                          TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
-                                         TextSendMessage( text='Jadi maaf, aku gak punya perintah lain selain yang ada di /info'  )] )
+                                         TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
 
+    
 
 ##    elif text == 'echo on' :
 ##        echi_switch(on
