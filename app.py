@@ -230,7 +230,7 @@ def handle_text_message(event):
                                          TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
                                          TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
 
-        elif str(datetime.now(pytz.utc).minute) == '50' :
+        elif str(datetime.now(pytz.utc).minute) == '5' :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
 
 ##@handler.add(MessageEvent, message=LocationMessage)
