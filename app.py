@@ -206,21 +206,29 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
-    elif text[:len('/getTitle')] == '/getTitle':
+    elif text_split[0] == 'L':
         
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Processing'))
-        
-        galnum = text[len('/getTitle')+1:text.find(')')]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part1 done'))
-        url = 'https://hitomi.la/galleries/{}.html'.format(galnum)
+        def LenCrypt(string) :
+            L = {'a': 'd', 's': 'f', 'd': 'g', 'f': 'h', 'g': 'j', 'h': 'k',
+                 'j': 'l', 'k': 'a', 'l': 's', 'z': 'c', 'x': 'v', 'c': 'b',
+                 'v': 'n', 'b': 'm', 'n': 'z', 'm': 'x', 'q': 'e', 'w': 'r',
+                 'e': 't', 'r': 'y', 't': 'u', 'y': 'i', 'u': 'o', 'i': 'p',
+                 'o': 'q', 'p': 'w', '.': '\n'}
+            
+            if len(string) == 1:
+                try :
+                    return L[string]
+                except KeyError :
+                    return string
+            else :
+                try :
+                    return L[string[0]] + LenCrypt(string[1:])
+                except KeyError :
+                    return string[0] + LenCrypt(string[1:])
 
-        response = u.urlopen(url)
-        webContent = response.read()
-
-        key = '''<a href="/reader/{}.html">'''.format(galnum)
-        title = webContent[webContent.find(key):webContent.find('</a>', webContent.find(key))]
-
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=title))
+        string = ' '.join(text_split[1:])
+        replya = LenCrypt(string)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=replya))
         
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
