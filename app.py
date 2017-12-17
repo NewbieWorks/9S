@@ -342,9 +342,10 @@ def handle_postback(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    line_bot_api.reply_message( event.reply_token,
-                                TextSendMessage(text='Got beacon event. hwid={}, device_message(hex string)={}'
-                                                .format(event.beacon.hwid, event.beacon.dm)))
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(
+            text='Got beacon event. hwid={}, device_message(hex string)={}'.format(event.beacon.hwid, event.beacon.dm)))
 
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
