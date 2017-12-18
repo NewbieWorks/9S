@@ -248,7 +248,7 @@ def handle_text_message(event):
 
         elif text[:len('send')] == 'send' :
             hist_to_send = hist[text[len('send')+1:]]
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
 
         elif 'clear' in text :
             ob_to_clear = text[0:text.find(':')]
