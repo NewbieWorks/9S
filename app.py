@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
@@ -211,6 +211,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text))     
             
     elif text in sapaan or 'selamat' in text.lower().split() :
+        recordit()
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
                 
     elif text == 'info' :
@@ -220,17 +221,17 @@ def handle_text_message(event):
         now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
 
-    elif text[0] == 'note' and text[1] == ':' and isinstance(event.source, SourceGroup) :
+    elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
         global note
         note.append(text[2:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
         
 
-    elif text[:7] == 'release' and isinstance(event.source, SourceUser) :
+    elif text[:len('release')] == 'release' and isinstance(event.source, SourceUser) :
         index = text[8:]
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
-    elif text[:8] == 'note:remove' and isinstance(event.source, SourceUser) :
+    elif text[:len('note:remove')] == 'note:remove' and isinstance(event.source, SourceUser) :
         index = text[9:]
         line_bot_api.reply_message(event.reply_token,
                                     [TextSendMessage(text='removing : ' + note[int(index)-1]),
@@ -240,7 +241,8 @@ def handle_text_message(event):
     elif ':' in text and isinstance(event.source, SourceUser):
         
         if text == 'send user' and isinstance(event.source, SourceUser) :
-            text_to_send = (', '.join(hist.keys()))[:-2]
+            global hist
+            text_to_send = ', '.join(hist.keys())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
         elif 'clear' in text :
@@ -250,6 +252,7 @@ def handle_text_message(event):
                                        TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
                  
     elif text[0:len('apakah')] == 'apakah' and len(text) > 7 and text[-1] == '?':
+        recordit()
         yesorno = [ 'Ya' , 'Tidak' ]
         to_copy = text[7:-1]
         last_copy = ''
@@ -261,8 +264,6 @@ def handle_text_message(event):
         else :
             kejaib[last_copy] = random.choice(yesorno)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
-
-
         
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
@@ -276,12 +277,7 @@ def handle_text_message(event):
         elif str(datetime.now(pytz.utc).minute) == '5' :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
                                 
-    if isinstance(event.source, SourceUser):
-        profile = line_bot_api.get_profile(event.source.user_id)
-        if profile.display_name in hist.keys() :
-            hist[profile.display_name] += '\n{}'.format(text)
-        else :
-            hist[profile.display_name] = text
+    
     
             
 
@@ -406,6 +402,13 @@ echo = False
 note = []
 kejaib = {}
 hist = {}
+def recordit() :
+    if isinstance(event.source, SourceUser):
+        profile = line_bot_api.get_profile(event.source.user_id)
+        if profile.display_name in hist.keys() :
+            hist[profile.display_name] += '\n{}'.format(text)
+        else :
+            hist[profile.display_name] = text
 #----------------------------------------------------end---------------------------------------------#
 
 if __name__ == "__main__":
