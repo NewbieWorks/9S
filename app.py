@@ -223,7 +223,19 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
                 
     elif text == 'info' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='discontinued, here\'s some command :\nprofile\nbye\nconfirm (RAW)\nsendto (ERROR)\nbuttons (RAW)\ncarousel (RAW) \nimage_carousel (RAW) \nimagemap (RAW) \nYoRHa \ninfo \nand Other Things'))
+        line_bot_api.reply_message(event.reply_token,
+                                   TextSendMessage(text='discontinued,\
+                                                         here\'s some command :\n\
+                                                         profile\n\
+                                                         bye \n\
+                                                         confirm (RAW)\n\
+                                                         sendto (ERROR)\n\
+                                                         buttons (RAW)\n\
+                                                         carousel (RAW) \n\
+                                                         image_carousel (RAW) \n\
+                                                         imagemap (RAW) \n\
+                                                         info \n\
+                                                         and Other Things'))
 
     elif text == 'time' :
         now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
@@ -231,25 +243,12 @@ def handle_text_message(event):
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
         global note
-        note.append(text[2:])
+        note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
         
-
-    elif text[:len('release')] == 'release' and isinstance(event.source, SourceUser) :
-        index = text[8:]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
-
-    elif text[:len('note:remove')] == 'note:remove' and isinstance(event.source, SourceUser) :
-        index = text[9:]
-        line_bot_api.reply_message(event.reply_token,
-                                    [TextSendMessage(text='removing : ' + note[int(index)-1]),
-                                     TextSendMessage(text='removed')])
-        note.pop(int(index)-1)
-
     elif ':' in text and isinstance(event.source, SourceUser):
         
-        if text == 'send user' and isinstance(event.source, SourceUser) :
-
+        if text == ':send user' :
             text_to_send = ', '.join(hist.keys())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
@@ -258,12 +257,22 @@ def handle_text_message(event):
             exec('{}.clear()'.format(ob_to_clear))
             line_bot_api.reply_message(event.reply_token,
                                        TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
+
+        elif text[:len('note:remove')] == 'note:remove' :
+            index = text[13:]
+            line_bot_api.reply_message(event.reply_token,
+                                        [TextSendMessage(text='removing : ' + note[int(index)-1]),
+                                         TextSendMessage(text='removed')])
+            note.pop(int(index)-1)
+
+        elif text[:len('release')] == 'release':
+            index = text[8:]
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
                  
-    elif text[0:len('apakah')] == 'apakah' and len(text) > 7 and text[-1] == '?':
+    elif text[:len('apakah')] == 'apakah' :
         yesorno = [ 'Ya' , 'Tidak' ]
-        to_copy = text[7:-1]
         last_copy = ''
-        for char in to_copy :
+        for char in text :
             if char not in string.punctuation :
                 last_copy += char
         if last_copy in kejaib.keys() :
