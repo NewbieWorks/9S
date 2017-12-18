@@ -104,9 +104,16 @@ def handle_text_message(event):
     text_split=text.split()
     
     if text == 'profile':
-        recordit()
+        
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
+            
+            if profile.display_name in hist.keys() :
+                hist[profile.display_name] += '\n{}'.format(text)
+            else :
+                hist[profile.display_name] = text
+
+
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
@@ -213,7 +220,6 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text))     
             
     elif text in sapaan or 'selamat' in text.lower().split() :
-        recordit()
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
                 
     elif text == 'info' :
@@ -243,7 +249,7 @@ def handle_text_message(event):
     elif ':' in text and isinstance(event.source, SourceUser):
         
         if text == 'send user' and isinstance(event.source, SourceUser) :
-            global hist
+
             text_to_send = ', '.join(hist.keys())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
@@ -254,7 +260,6 @@ def handle_text_message(event):
                                        TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
                  
     elif text[0:len('apakah')] == 'apakah' and len(text) > 7 and text[-1] == '?':
-        recordit()
         yesorno = [ 'Ya' , 'Tidak' ]
         to_copy = text[7:-1]
         last_copy = ''
@@ -404,13 +409,7 @@ echo = False
 note = []
 kejaib = {}
 hist = {}
-def recordit() :
-    if isinstance(event.source, SourceUser):
-        profile = line_bot_api.get_profile(event.source.user_id)
-        if profile.display_name in hist.keys() :
-            hist[profile.display_name] += '\n{}'.format(text)
-        else :
-            hist[profile.display_name] = text
+
 #----------------------------------------------------end---------------------------------------------#
 
 if __name__ == "__main__":
