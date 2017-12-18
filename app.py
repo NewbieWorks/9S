@@ -47,6 +47,7 @@ from linebot.models import (
 from time import gmtime, strftime
 import pytz
 from datetime import datetime
+import string
 
 app = Flask(__name__)
 
@@ -219,13 +220,49 @@ def handle_text_message(event):
         now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
 
-    elif text[0] == 'c' and text[1] == ':' and isinstance(event.source, SourceGroup) :
-        global kumpul
-        kumpul.append(text[2:])
+    elif text[0] == 'note' and text[1] == ':' and isinstance(event.source, SourceGroup) :
+        global note
+        note.append(text[2:])
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
+        
 
-    elif text == 'release' and isinstance(event.source, SourceUser) :
+    elif text[:7] == 'release' and isinstance(event.source, SourceUser) :
+        index = text[8:]
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kumpul[-1]))
+    elif text[:8] == 'note:remove' and isinstance(event.source, SourceUser) :
+        index = text[9:]
+        line_bot_api.reply_message(event.reply_token,
+                                    [TextSendMessage(text='removing : ' + note[int(index)-1]),
+                                     TextSendMessage(text='removed')])
+        note.pop(int(index)-1)
+
+    elif ':' in text and isinstance(event.source, SourceUser):
+        
+        if text == 'send user' and isinstance(event.source, SourceUser) :
+            text_to_send = (', '.join(hist.keys()))[:-2]
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+
+        elif 'clear' in text :
+            ob_to_clear = text[0:text.find(':')]
+            exec('{}.clear()'.format(ob_to_clear))
+            line_bot_api.reply_message(event.reply_token,
+                                       TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
+                 
+    elif text[0:len('apakah')] == 'apakah' and len(text) > 7 and text[-1] == '?':
+        yesorno = [ 'Ya' , 'Tidak' ]
+        to_copy = text[7:-1]
+        last_copy = ''
+        for char in to_copy :
+            if char not in string.punctuation :
+                last_copy += char
+        if last_copy in kejaib.keys() :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
+        else :
+            kejaib[last_copy] = random.choice(yesorno)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
+
+
         
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
@@ -233,13 +270,19 @@ def handle_text_message(event):
             if isinstance(event.source, SourceUser):
                 line_bot_api.reply_message(  event.reply_token,
                                             [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
-                                             TextSendMessage( text='aku ini cuma bot yang sudah diskontinu'  ),
+                                             TextSendMessage( text='aku ini cuma bot yang sudah diskontinu(mungkin)'  ),
                                              TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
 
         elif str(datetime.now(pytz.utc).minute) == '5' :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
-
-
+                                
+    if isinstance(event.source, SourceUser):
+        profile = line_bot_api.get_profile(event.source.user_id)
+        if profile.display_name in hist.keys() :
+            hist[profile.display_name] += '\n{}'.format(text)
+        else :
+            hist[profile.display_name] = text
+    
             
 
 ##@handler.add(MessageEvent, message=LocationMessage)
@@ -357,10 +400,14 @@ def handle_beacon(event):
         event.reply_token,
         TextSendMessage(
             text='Got beacon event. hwid={}, device_message(hex string)={}'.format(event.beacon.hwid, event.beacon.dm)))
-
+#---------------------------------------------built-in-----object------------------------------------#
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
-kumpul = []
+note = []
+kejaib = {}
+hist = {}
+#----------------------------------------------------end---------------------------------------------#
+
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
