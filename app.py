@@ -104,6 +104,7 @@ def handle_text_message(event):
     text_split=text.split()
     
     if text == 'profile':
+        recordit()
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
             line_bot_api.reply_message(  event.reply_token,
