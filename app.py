@@ -103,14 +103,14 @@ def handle_text_message(event):
     text = text.lower()
     text_split=text.split()
     
-    if text == 'profile':        
+    if text == 'profile':
+        if isinstance(event.source, SourceUser):
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextMessage(text="Bot can't use profile API without user ID"))
+            line_bot_api.reply_message(  event.reply_token,
+                                         TextMessage(text="Bot can't use profile API without user ID"))
             
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
