@@ -99,8 +99,8 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    text = event.message.text
-    text = text.lower()
+    text_raw = event.message.text
+    text = text_raw.lower()
     text_split=text.split()
     
     if text == 'profile':
@@ -198,8 +198,7 @@ def handle_text_message(event):
         
         line_bot_api.reply_message(event.reply_token, template_message)
 
-    elif text == 'testUserID' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(event.source.user_id)))
+
         
     elif text == 'echo switch':
         global echo
@@ -211,7 +210,7 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
     elif echo :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text))     
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_raw))     
             
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
@@ -247,7 +246,7 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
         elif text[:len('send')] == 'send' :
-            hist_to_send = hist[text[len('send')+1:]]
+            hist_to_send = '\n'.join(hist.values())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
 
         elif 'clear' in text :
@@ -271,13 +270,20 @@ def handle_text_message(event):
         yesorno = [ 'Ya' , 'Tidak' ]
         last_copy = ''
         for char in text :
-            if char not in string.punctuation :
+            if char not in string.punctuation and char != ' ' :
                 last_copy += char
         if last_copy in kejaib.keys() :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
         else :
             kejaib[last_copy] = random.choice(yesorno)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
+
+    elif 'count' in text :
+        numerik = text[text.find('(')+1:text.find(')')]
+        number = int(numerik)
+        line_bot_api.reply_message(event.reply_token, TextMessage(text='<<Counting to {}>>'.format(str(i))))
+        for i in range (1:number+1):
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Count : ' + str(i)))
         
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
