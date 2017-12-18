@@ -103,17 +103,7 @@ def handle_text_message(event):
     text = text.lower()
     text_split=text.split()
     
-    if text == 'profile':
-        
-        if isinstance(event.source, SourceUser):
-            profile = line_bot_api.get_profile(event.source.user_id)
-            
-            if profile.display_name in hist.keys() :
-                hist[profile.display_name] += '\n{}'.format(text)
-            else :
-                hist[profile.display_name] = text
-
-
+    if text == 'profile':        
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
@@ -130,7 +120,7 @@ def handle_text_message(event):
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine') )
-            line_bot_api.leave_room(event.source.room_id)
+            line_bot_api.leave_room(event.source.room_id) 
         else:
             line_bot_api.reply_message( event.reply_token,
                                         TextMessage(text="Leave me yourself"))
@@ -206,6 +196,9 @@ def handle_text_message(event):
                                                template=image_carousel_template)
         
         line_bot_api.reply_message(event.reply_token, template_message)
+
+    elif text == 'testUserID' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event.source.user_id))
         
     elif text == 'echo switch':
         global echo
@@ -252,6 +245,10 @@ def handle_text_message(event):
             text_to_send = ', '.join(hist.keys())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
+        elif text[:len('send')] == 'send' :
+            hist_to_send = exec('hist[{}]'.format(text[text.find(':'):]))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+
         elif 'clear' in text :
             ob_to_clear = text[0:text.find(':')]
             exec('{}.clear()'.format(ob_to_clear))
@@ -283,6 +280,12 @@ def handle_text_message(event):
         
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
+        
+        if profile.display_name in hist.keys() :
+            hist[profile.display_name] += '\n{}'.format(text)
+        else :
+            hist[profile.display_name] = text
+            
         if text in profile.display_name :
             if isinstance(event.source, SourceUser):
                 line_bot_api.reply_message(  event.reply_token,
@@ -290,8 +293,12 @@ def handle_text_message(event):
                                              TextSendMessage( text='aku ini cuma bot yang sudah diskontinu(mungkin)'  ),
                                              TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
 
-        elif str(datetime.now(pytz.utc).minute) == '5' :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
+## ------------------project birthday reminder-------------------------------------
+##        elif str(datetime.now(pytz.utc).minute) == '5' :
+##            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
+
+
+        
                                 
     
     
