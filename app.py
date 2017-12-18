@@ -105,6 +105,7 @@ def handle_text_message(event):
     
     if text == 'profile':
         if isinstance(event.source, SourceUser):
+            profile = line_bot_api.get_profile(event.source.user_id)
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
@@ -198,7 +199,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, template_message)
 
     elif text == 'testUserID' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=event.source.user_id))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(event.source.user_id)))
         
     elif text == 'echo switch':
         global echo
@@ -246,7 +247,7 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
         elif text[:len('send')] == 'send' :
-            hist_to_send = exec('hist[{}]'.format(text[text.find(':'):]))
+            hist_to_send = hist[text[len('send')+1:]]
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
         elif 'clear' in text :
