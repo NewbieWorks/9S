@@ -231,7 +231,15 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
     elif echo :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_raw))     
+        profile = line_bot_api.get_profile(event.source.user_id)
+        
+        if profile.display_name in hist.keys() :
+            hist[profile.display_name] += '\n{}'.format(text_raw)
+        else :
+            hist[profile.display_name] = text_raw
+            
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_raw))
+        
             
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
@@ -274,36 +282,38 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
         
     elif ':' in text and isinstance(event.source, SourceUser):
-        
-        if text == ':send user' : #:send user
-            text_to_send = ', '.join(hist.keys())
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+        try : 
+            if text == ':send user' : #:send user
+                text_to_send = ', '.join(hist.keys())
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
-        elif text[:len('send')] == 'send' : #send:<<name>>
-            key = text[text.find(':')+1:]
-            hist_to_send = hist[key]
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
+            elif text[:len('send')] == 'send' : #send:<<name>>
+                key = text_raw[text_raw.find(':')+1:]
+                hist_to_send = hist[key]
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
 
-        elif 'clear' in text : # (note/hist/bugreport):clear
-            ob_to_clear = text[0:text.find(':')]
-            exec('{}.clear()'.format(ob_to_clear))
-            line_bot_api.reply_message(event.reply_token,
-                                       TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
+            elif 'clear' in text : # (note/hist/bugreport):clear
+                ob_to_clear = text[0:text.find(':')]
+                exec('{}.clear()'.format(ob_to_clear))
+                line_bot_api.reply_message(event.reply_token,
+                                           TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
 
-        elif text[:len('note:remove')] == 'note:remove' : #note:remove
-            index = text[13:]
-            line_bot_api.reply_message(event.reply_token,
-                                        [TextSendMessage(text='removing : ' + note[int(index)-1]),
-                                         TextSendMessage(text='removed')])
-            note.pop(int(index)-1)
+            elif text[:len('note:remove')] == 'note:remove' : #note:remove
+                index = text[13:]
+                line_bot_api.reply_message(event.reply_token,
+                                            [TextSendMessage(text='removing : ' + note[int(index)-1]),
+                                             TextSendMessage(text='removed')])
+                note.pop(int(index)-1)
 
-        elif text[:len('release')] == 'release': #release <<index>>
-            try :
-                index = text[8:]
-            except :
-                index = '0'
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
-                 
+            elif text[:len('release')] == 'release': #release <<index>>
+                try :
+                    index = text[8:]
+                except :
+                    index = '0'
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
+        except Exception as e :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
+
     elif text[:len('apakah')] == 'apakah' :
         yesorno = [ 'Ya' , 'Tidak' ]
         last_copy = ''
@@ -318,11 +328,11 @@ def handle_text_message(event):
 
     elif 'count' in text :
         try :
-            a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(i))),"
+            a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
             numerik = text[text.find('(')+1:text.find(')')]
             number = int(numerik)
             while number > 0 :
-                a += "TextSendMessage(text='Count : ' + str(i)),"
+                a += "TextSendMessage(text='Count : ' + str(number)),"
                 number -= 1
             else :
                 a = a[:-1] + "])"
@@ -476,7 +486,7 @@ def handle_beacon(event):
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
 note = []
-kejaib = {}
+kejaib = {'ya':'Tidak', 'tidak':'Ya'}
 hist = {}
 bugreport = []
 
