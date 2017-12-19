@@ -107,17 +107,17 @@ def handle_text_message(event):
 
     if text == 'info' :
         display ='''[[~Command for 9S~]]
-                    ====NewbieWorks====
-                    I Learning New Command Everyday ~~
+====NewbieWorks====
+I Learning New Command Everyday ~~
 
-                    here's some command :
-                    profile : send your display name and status message
-                    bye : remove 9S from Group or Room
-                    echo switch (on/off) : turn (on/off) the echo
-                    send mail to <<email>> , <<message>> : send <<message>> to <<email>>
-                    time : the answer for 'What time is it?
-                    apakah <<question>> ? : Mirror from Kerang Ajaib bot
-                    info : show 9S\'s Command\n\and Other Command Coming up '''
+here's some command :
+profile : send your display name and status message
+bye : remove 9S from Group or Room
+echo switch (on/off) : turn (on/off) the echo
+send mail to <<email>> , <<message>> : send <<message>> to <<email>>
+time : the answer for 'What time is it?
+apakah <<question>> ? : Mirror from Kerang Ajaib bot
+info : show 9S\'s Command\n\and Other Command Coming up '''
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
 
