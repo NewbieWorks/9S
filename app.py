@@ -268,7 +268,7 @@ def handle_text_message(event):
                 
 
     elif text == 'time' or text == 'What time is it?':
-        now = '{}:{}:{} {}-{}-{}'.format(str(datetime.now(pytz.utc).hour),
+        now = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(pytz.utc).hour),
                                          str(datetime.now(pytz.utc).minute),
                                          str(datetime.now(pytz.utc).second),
                                          str(datetime.now(pytz.utc).day) ,
