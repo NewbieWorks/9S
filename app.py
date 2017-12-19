@@ -108,16 +108,33 @@ def handle_text_message(event):
     if text == 'info' :
         display ='''[[~Command for 9S~]]
 ====NewbieWorks====
-I Learning New Command Everyday ~~
+I Learn New Command Everyday ~~
 
 here's some command :
-profile : send your display name and status message
-bye : remove 9S from Group or Room
-echo switch (on/off) : turn (on/off) the echo
-send mail to <<email>> , <<message>> : send <<message>> to <<email>>
-time : the answer for 'What time is it?
-apakah <<question>> ? : Mirror from Kerang Ajaib bot
-info : show 9S\'s Command\n\and Other Command Coming up '''
+
+profile :
+send your display name and status message
+
+bye :
+remove 9S from Group or Room
+
+echo switch (on/off) :
+turn (on/off) the echo
+
+send mail to <<email>> , <<message>> :
+send <<message>> to <<email>>
+
+time :
+the answer for 'What time is it?'
+
+apakah <<question>> ? :
+Mirror from Kerang Ajaib bot
+
+info :
+show 9S's Command
+
+and Other Command Coming up soon
+(if my master's care)'''
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
 
@@ -296,7 +313,8 @@ info : show 9S\'s Command\n\and Other Command Coming up '''
                                                         str(datetime.now(WIT).day) ,
                                                         str(datetime.now(WIT).year))
         
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='WIB : {}\nWITA : {}\nWIT : {}'.format(nowWIB,nowWITA,nowWIT)))
+        line_bot_api.reply_message(event.reply_token,
+                                   TextSendMessage(text='{:<6s} : {}\n{:<6s} : {}\n{:<6s} : {}'.format('WIB',nowWIB,'WITA',nowWITA,'WIT',nowWIT)))
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
         global note
