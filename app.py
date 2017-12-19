@@ -133,8 +133,9 @@ Mirror from Kerang Ajaib bot
 info :
 show 9S's Command
 
+
 and Other Command Coming up soon
-(if my master's care)'''
+(if my master not watching anime)'''
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
 
@@ -314,7 +315,7 @@ and Other Command Coming up soon
                                                         str(datetime.now(WIT).year))
         
         line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text='{:<6s} : {}\n{:<6s} : {}\n{:<6s} : {}'.format('WIB',nowWIB,'WITA',nowWITA,'WIT',nowWIT)))
+                                   TextSendMessage(text='{:<6s} : {}\n{:<6s}: {}\n{:<6s} : {}'.format('WIB',nowWIB,'WITA',nowWITA,'WIT',nowWIT)))
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
         global note
