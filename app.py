@@ -49,6 +49,7 @@ import pytz
 from datetime import datetime
 import string
 import random
+import smtplib as s
 
 app = Flask(__name__)
 
@@ -214,6 +215,32 @@ def handle_text_message(event):
             
     elif text in sapaan or 'selamat' in text.lower().split() :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
+
+    elif text[:len('send mail to ')] == 'send mail to ' : #send mail to <<email>> , <<message>>
+        try :
+            sender = 'newbieworkslinebot@gmail.com'
+            password = 'nathanaelX1'
+            receiver = text[len('send mail to '):text.find(',')]
+            msg = text[text.find(',')+1:]
+
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Sending message to {} ...'.format(receiver)))
+
+            server = s.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender,password)
+            
+            server.sendmail(sender,receiver, msg)
+            server.quit()
+
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Sended'))
+            
+        except Exception as e:
+            now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
+            profile = line_bot_api.get_profile(event.source.user_id)
+            bugreport.append((profile.display_name,now,e))
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Error : {}'.format(e)))
+            
+            
                 
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token,
@@ -279,12 +306,14 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
 
     elif 'count' in text :
-        numerik = text[text.find('(')+1:text.find(')')]
-        number = int(numerik)
-        line_bot_api.reply_message(event.reply_token, TextMessage(text='<<Counting to {}>>'.format(str(i))))
-        for i in range (1:number+1):
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Count : ' + str(i)))
-        
+        try :
+            numerik = text[text.find('(')+1:text.find(')')]
+            number = int(numerik)
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='<<Counting to {}>>'.format(str(i))))
+            for i in range (1,number+1):
+                line_bot_api.reply_message(event.reply_token, TextMessage(text='Count : ' + str(i)))
+        except Exception :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
         
@@ -432,6 +461,7 @@ echo = False
 note = []
 kejaib = {}
 hist = {}
+bugreport = []
 
 #----------------------------------------------------end---------------------------------------------#
 
