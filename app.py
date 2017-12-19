@@ -273,7 +273,7 @@ info : show 9S\'s Command\n\and Other Command Coming up '''
 
     elif text == 'time' or text == 'what time is it?':
         WIB = pytz.timezone('Asia/Jakarta')
-        WITA = pytz.timezone('Asia/Makasar')
+        WITA = pytz.timezone('Asia/Makassar')
         WIT = pytz.timezone('Asia/Jayapura')
         nowWIB = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIB).hour),
                                                         str(datetime.now(WIB).minute),
