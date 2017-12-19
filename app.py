@@ -106,19 +106,22 @@ def handle_text_message(event):
     text_split=text.split()
 
     if text == 'info' :
-        line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text='[[~Command for 9S~]]\n\
-                                                         ====NewbieWorks====\n\
-                                                         Learning new everyday ~~ \n\
-                                                         here\'s some command :\n\n\
-                                                         profile : send your display name and status message\n\n\
-                                                         bye : remove 9S from Group or Room\n\n\
-                                                         echo switch (on/off) : turn (on/off) the echo \n\n\
-                                                         send mail to <<email>> , <<message>> : send <<message>> to <<email>>\n\n\
-                                                         time : the answer for \'What time is it? \n\n\
-                                                         apakah <<question>> ? : Mirror from Kerang Ajaib bot \n\n\
-                                                         info : show 9S\'s Command\n\
-                                                         and Other Command Coming up '))
+        display ='''[[~Command for 9S~]]
+                    ====NewbieWorks====
+                    I Learning New Command Everyday ~~
+
+                    here's some command :
+                    profile : send your display name and status message
+                    bye : remove 9S from Group or Room
+                    echo switch (on/off) : turn (on/off) the echo
+                    send mail to <<email>> , <<message>> : send <<message>> to <<email>>
+                    time : the answer for 'What time is it?
+                    apakah <<question>> ? : Mirror from Kerang Ajaib bot
+                    info : show 9S\'s Command\n\and Other Command Coming up '''
+        
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
+
+                                                         
     
     elif text == 'profile':
         if isinstance(event.source, SourceUser):
@@ -268,14 +271,32 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token, TextMessage(text='Error : {}'.format(e)))
                 
 
-    elif text == 'time' or text == 'What time is it?':
-        now = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(pytz.utc).hour),
-                                         str(datetime.now(pytz.utc).minute),
-                                         str(datetime.now(pytz.utc).second),
-                                         str(datetime.now(pytz.utc).day) ,
-                                         str(datetime.now(pytz.utc).month) ,
-                                         str(datetime.now(pytz.utc).year))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
+    elif text == 'time' or text == 'what time is it?':
+        WIB = pytz.timezone('Asia/Jakarta')
+        WITA = pytz.timezone('Asia/Makasar')
+        WIT = pytz.timezone('Asia/Jayapura')
+        nowWIB = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIB).hour),
+                                                        str(datetime.now(WIB).minute),
+                                                        str(datetime.now(WIB).second),
+                                                        str(datetime.now(WIB).month) ,
+                                                        str(datetime.now(WIB).day) ,
+                                                        str(datetime.now(WIB).year))
+        
+        nowWITA = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
+                                                         str(datetime.now(WITA).minute),
+                                                         str(datetime.now(WITA).second),
+                                                         str(datetime.now(WITA).month) ,
+                                                         str(datetime.now(WITA).day) ,
+                                                         str(datetime.now(WITA).year))
+        
+        nowWIT = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIT).hour),
+                                                        str(datetime.now(WIT).minute),
+                                                        str(datetime.now(WIT).second),
+                                                        str(datetime.now(WIT).month) ,
+                                                        str(datetime.now(WIT).day) ,
+                                                        str(datetime.now(WIT).year))
+        
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='WIB : {}\nWITA : {}\nWIT : {}'.format(nowWIB,nowWITA,nowWIT)))
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
         global note
@@ -333,7 +354,7 @@ def handle_text_message(event):
     elif 'count' in text :
         try :
             a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
-            numerik = text[text.find('(')+1:text.find(')')]
+            numerik = text[text.find('(')+1:-1]
             number = int(numerik)
             while number > 0 :
                 a += "TextSendMessage(text='Count : ' + str(number)),"
@@ -490,7 +511,7 @@ def handle_beacon(event):
 sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
 note = []
-kejaib = {'ya':'Tidak', 'tidak':'Ya'}
+kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
 hist = {}
 bugreport = []
 
