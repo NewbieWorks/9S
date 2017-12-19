@@ -103,8 +103,23 @@ def handle_text_message(event):
     text_raw = event.message.text
     text = text_raw.lower()
     text_split=text.split()
+
+    if text == 'info' :
+        line_bot_api.reply_message(event.reply_token,
+                                   TextSendMessage(text='[[~Command for 9S~]]\n\
+                                                         ====NewbieWorks====\n\
+                                                         Learning new everyday ~~ \n\
+                                                         here\'s some command :\n\n\
+                                                         profile : send your display name and status message\n\n\
+                                                         bye : remove 9S from Group or Room\n\n\
+                                                         echo switch (on/off) : turn (on/off) the echo \n\n\
+                                                         send mail to <<email>> , <<message>> : send <<message>> to <<email>>\n\n\
+                                                         time : the answer for \'What time is it? \n\n\
+                                                         apakah <<question>> ? : Mirror from Kerang Ajaib bot \n\n\
+                                                         info : show 9S\'s Command\n\
+                                                         and Other Command Coming up '))
     
-    if text == 'profile':
+    elif text == 'profile':
         if isinstance(event.source, SourceUser):
             profile = line_bot_api.get_profile(event.source.user_id)
             line_bot_api.reply_message(  event.reply_token,
@@ -118,91 +133,96 @@ def handle_text_message(event):
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(event.reply_token,
                                        TextMessage(text='I\'ll be back ....'))
-            text_message = TextSendMessage(text='testers!')
+            text_message = TextSendMessage(text='so sad ._.')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine') )
             line_bot_api.leave_room(event.source.room_id) 
         else:
             line_bot_api.reply_message( event.reply_token,
-                                        TextMessage(text="Leave me yourself"))
+                                        TextMessage(text="Leave me yourself, this is 1:1 chat ..."))
             
-    elif text == 'confirm':
-        confirm_template = ConfirmTemplate(text='Do it?',
-                                           actions=[MessageTemplateAction(label='Yes', text='Yes!'),
-                                                    MessageTemplateAction(label='No', text='No!'), ])
-        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''',
-                                               template=confirm_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-        
-    elif text == 'view profiles' :
-        profile = line_bot_api.get_group_member_profile(group_id, user_id)
-        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=profile.display_name),
-                                                       TextSendMessage(text=profile.user_id),
-                                                       TextSendMessage(text=profile.picture_url)])
-
-    elif text == 'buttons':
-        buttons_template = ButtonsTemplate(
-            title='My buttons sample', text='Hello, my buttons', actions=[
-                URITemplateAction(
-                    label='Go to line.me', uri='https://line.me'),
-                PostbackTemplateAction(label='ping', data='ping'),
-                PostbackTemplateAction(
-                    label='ping with text', data='ping',
-                    text='ping'),
-                MessageTemplateAction(label='Translate Rice', text='米')
-            ])
-        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-        
-    elif text == 'carousel':
-        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
-                                                                     title='fuga1',
-                                                                     actions=[URITemplateAction(label='Go to line.me' ,
-                                                                                                uri='https://line.me'),
-                                                                              PostbackTemplateAction(label='ping',
-                                                                                                     data='ping')   ]
-                                                                     ),
-                                                      CarouselColumn(text='hoge2',
-                                                                     title='fuga2',
-                                                                     actions=[PostbackTemplateAction(label='ping with text',
-                                                                                                     data='ping',
-                                                                                                     text='ping'),
-                                                                              MessageTemplateAction(label='Translate Rice',
-                                                                                                    text='米')]),])
-        template_message = TemplateSendMessage(alt_text='Carousel alt text',
-                                               template=carousel_template)
-        
-        line_bot_api.reply_message(event.reply_token, template_message)
-        
-    elif text == 'image_carousel':
-        image_carousel_template = ImageCarouselTemplate(columns=
-                                                            [ImageCarouselColumn
-                                                                (image_url='https://via.placeholder.com/1024x1024',
-                                                                 action=DatetimePickerTemplateAction
-                                                                    (label='datetime',
-                                                                     data='datetime_postback',
-                                                                     mode='datetime')
-                                                                 ) ,
-                                                             ImageCarouselColumn
-                                                                (image_url='https://via.placeholder.com/1024x1024',
-                                                                 action=DatetimePickerTemplateAction
-                                                                    (label='date',
-                                                                     data='date_postback',
-                                                                     mode='date')
-                                                                 )
-                                                             ]
-                                                        )
-
-        template_message = TemplateSendMessage(alt_text='ImageCarousel alt text',
-                                               template=image_carousel_template)
-        
-        line_bot_api.reply_message(event.reply_token, template_message)
-
-
-        
-    elif text == 'echo switch':
+##    elif text == 'confirm':
+##        confirm_template = ConfirmTemplate(text='Do it?',
+##                                           actions=[MessageTemplateAction(label='Yes', text='Yes!'),
+##                                                    MessageTemplateAction(label='No', text='No!'), ])
+##        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''',
+##                                               template=confirm_template)
+##        line_bot_api.reply_message(event.reply_token, template_message)
+##        
+##    elif text == 'view profiles' :
+##        profile = line_bot_api.get_group_member_profile(group_id, user_id)
+##        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=profile.display_name),
+##                                                       TextSendMessage(text=profile.user_id),
+##                                                       TextSendMessage(text=profile.picture_url)])
+##
+##    elif text == 'buttons':
+##        buttons_template = ButtonsTemplate(
+##            title='My buttons sample', text='Hello, my buttons', actions=[
+##                URITemplateAction(
+##                    label='Go to line.me', uri='https://line.me'),
+##                PostbackTemplateAction(label='ping', data='ping'),
+##                PostbackTemplateAction(
+##                    label='ping with text', data='ping',
+##                    text='ping'),
+##                MessageTemplateAction(label='Translate Rice', text='米')
+##            ])
+##        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+##        line_bot_api.reply_message(event.reply_token, template_message)
+##        
+##    elif text == 'carousel':
+##        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
+##                                                                     title='fuga1',
+##                                                                     actions=[URITemplateAction(label='Go to line.me' ,
+##                                                                                                uri='https://line.me'),
+##                                                                              PostbackTemplateAction(label='ping',
+##                                                                                                     data='ping')   ]
+##                                                                     ),
+##                                                      CarouselColumn(text='hoge2',
+##                                                                     title='fuga2',
+##                                                                     actions=[PostbackTemplateAction(label='ping with text',
+##                                                                                                     data='ping',
+##                                                                                                     text='ping'),
+##                                                                              MessageTemplateAction(label='Translate Rice',
+##                                                                                                    text='米')]),])
+##        template_message = TemplateSendMessage(alt_text='Carousel alt text',
+##                                               template=carousel_template)
+##        
+##        line_bot_api.reply_message(event.reply_token, template_message)
+##        
+##    elif text == 'image_carousel':
+##        image_carousel_template = ImageCarouselTemplate(columns=
+##                                                            [ImageCarouselColumn
+##                                                                (image_url='https://via.placeholder.com/1024x1024',
+##                                                                 action=DatetimePickerTemplateAction
+##                                                                    (label='datetime',
+##                                                                     data='datetime_postback',
+##                                                                     mode='datetime')
+##                                                                 ) ,
+##                                                             ImageCarouselColumn
+##                                                                (image_url='https://via.placeholder.com/1024x1024',
+##                                                                 action=DatetimePickerTemplateAction
+##                                                                    (label='date',
+##                                                                     data='date_postback',
+##                                                                     mode='date')
+##                                                                 )
+##                                                             ]
+##                                                        )
+##
+##        template_message = TemplateSendMessage(alt_text='ImageCarousel alt text',
+##                                               template=image_carousel_template)
+##        
+##        line_bot_api.reply_message(event.reply_token, template_message)
+##
+            
+    elif 'echo switch' in text:
         global echo
+        
+        if 'on' in text :
+            echo = False
+        elif 'off' in text :
+            echo  = True
+        
         if echo :
             echo = False
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo Off'))
@@ -223,8 +243,6 @@ def handle_text_message(event):
             receiver = text[len('send mail to '):text.find(',')]
             msg = text[text.find(',')+1:]
 
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Sending message to {} ...'.format(receiver)))
-
             server = s.SMTP('smtp.gmail.com', 587)
             server.starttls()
             server.login(sender,password)
@@ -232,33 +250,22 @@ def handle_text_message(event):
             server.sendmail(sender,receiver, msg)
             server.quit()
 
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Sended'))
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Messsage Sended'))
             
         except Exception as e:
             now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
             profile = line_bot_api.get_profile(event.source.user_id)
             bugreport.append((profile.display_name,now,e))
             line_bot_api.reply_message(event.reply_token, TextMessage(text='Error : {}'.format(e)))
-            
-            
                 
-    elif text == 'info' :
-        line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text='discontinued,\
-                                                         here\'s some command :\n\
-                                                         profile\n\
-                                                         bye \n\
-                                                         confirm (RAW)\n\
-                                                         sendto (ERROR)\n\
-                                                         buttons (RAW)\n\
-                                                         carousel (RAW) \n\
-                                                         image_carousel (RAW) \n\
-                                                         imagemap (RAW) \n\
-                                                         info \n\
-                                                         and Other Things'))
 
-    elif text == 'time' :
-        now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
+    elif text == 'time' or text == 'What time is it?':
+        now = '{}:{}:{} {}-{}-{}'.format(str(datetime.now(pytz.utc).hour),
+                                         str(datetime.now(pytz.utc).minute),
+                                         str(datetime.now(pytz.utc).second),
+                                         str(datetime.now(pytz.utc).day) ,
+                                         str(datetime.now(pytz.utc).month) ,
+                                         str(datetime.now(pytz.utc).year))
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=now))
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
@@ -268,29 +275,33 @@ def handle_text_message(event):
         
     elif ':' in text and isinstance(event.source, SourceUser):
         
-        if text == ':send user' :
+        if text == ':send user' : #:send user
             text_to_send = ', '.join(hist.keys())
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
-        elif text[:len('send')] == 'send' :
-            hist_to_send = '\n'.join(hist.values())
+        elif text[:len('send')] == 'send' : #send:<<name>>
+            key = text[text.find(':')+1:]
+            hist_to_send = hist[key]
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
 
-        elif 'clear' in text :
+        elif 'clear' in text : # (note/hist/bugreport):clear
             ob_to_clear = text[0:text.find(':')]
             exec('{}.clear()'.format(ob_to_clear))
             line_bot_api.reply_message(event.reply_token,
                                        TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
 
-        elif text[:len('note:remove')] == 'note:remove' :
+        elif text[:len('note:remove')] == 'note:remove' : #note:remove
             index = text[13:]
             line_bot_api.reply_message(event.reply_token,
                                         [TextSendMessage(text='removing : ' + note[int(index)-1]),
                                          TextSendMessage(text='removed')])
             note.pop(int(index)-1)
 
-        elif text[:len('release')] == 'release':
-            index = text[8:]
+        elif text[:len('release')] == 'release': #release <<index>>
+            try :
+                index = text[8:]
+            except :
+                index = '0'
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
                  
     elif text[:len('apakah')] == 'apakah' :
@@ -307,11 +318,17 @@ def handle_text_message(event):
 
     elif 'count' in text :
         try :
+            a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(i))),"
             numerik = text[text.find('(')+1:text.find(')')]
             number = int(numerik)
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='<<Counting to {}>>'.format(str(i))))
-            for i in range (1,number+1):
-                line_bot_api.reply_message(event.reply_token, TextMessage(text='Count : ' + str(i)))
+            while number > 0 :
+                a += "TextSendMessage(text='Count : ' + str(i)),"
+                number -= 1
+            else :
+                a = a[:-1] + "])"
+
+            exec(a)
+            
         except Exception :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
     else :
