@@ -50,6 +50,7 @@ from datetime import datetime
 import string
 import random
 import smtplib as s
+import emoji
 
 app = Flask(__name__)
 
@@ -280,6 +281,9 @@ def handle_text_message(event):
         global note
         note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
+
+    elif text_raw == emoji.emojize(':sob:'):
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='emojize success'))
         
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
