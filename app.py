@@ -323,12 +323,9 @@ and Other Command Coming up soon
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
     elif text == 'yorha':
-        image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg',preview_image_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
+        image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
         line_bot_api.reply_message(event.reply_token,image_message)
 
-    elif text_raw == emoji.emojize(':sob:'):
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='emojize success'))
-        
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
             if text == ':send user' : #:send user
@@ -381,16 +378,15 @@ and Other Command Coming up soon
             a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
             numerik = text[text.find('(')+1:-1]
             number = int(numerik)
-            while number > 0 :
-                a += "TextSendMessage(text='Count : ' + str(number)),"
-                number -= 1
+            for i in range(number,0,-1) :
+                a += "TextSendMessage(text='Count : ' + str(i)),"
             else :
                 a = a[:-1] + "])"
-
             exec(a)
             
         except Exception :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
+            
     else :
         profile = line_bot_api.get_profile(event.source.user_id)
         
