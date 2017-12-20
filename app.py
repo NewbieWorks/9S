@@ -350,7 +350,7 @@ and Other Command Coming up soon
                 note.pop(int(index)-1)
 
             elif text == 'yorha':
-                image_message = ImageSendMessage(original_content_url='https://ih1.redbubble.net/image.355467953.1024/flat,800x800,075,t.jpg',preview_image_url='https://ih1.redbubble.net/image.355467953.1024/flat,800x800,075,t.jpg')
+                image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg',preview_image_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
                 line_bot_api.reply_message(event.reply_token,image_message)
                                            
             elif text[:len('release')] == 'release': #release <<index>>
