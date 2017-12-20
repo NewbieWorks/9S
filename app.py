@@ -353,7 +353,6 @@ and Other Command Coming up soon
                 preview = 'https://ih1.redbubble.net/image.355467953.1024/flat,800x800,075,t.jpg'
                 ori = 'https://ih0.redbubble.net/image.355469041.0100/flat,900x900,070,f.jpg'
                 image_message = ImageSendMessage(original_content_url=ori,preview_image_url=preview)
-)
                 line_bot_api.reply_message(event.reply_token,image_message)
                                            
             elif text[:len('release')] == 'release': #release <<index>>
