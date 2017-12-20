@@ -322,8 +322,7 @@ and Other Command Coming up soon
         note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
-     elif text == 'yorha':
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
+    elif text == 'yorha':
         image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg',preview_image_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
         line_bot_api.reply_message(event.reply_token,image_message)
 
