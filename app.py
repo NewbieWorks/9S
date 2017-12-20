@@ -322,6 +322,10 @@ and Other Command Coming up soon
         note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
+     elif text == 'yorha':
+        image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg',preview_image_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
+        line_bot_api.reply_message(event.reply_token,image_message)
+
     elif text_raw == emoji.emojize(':sob:'):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='emojize success'))
         
@@ -349,10 +353,7 @@ and Other Command Coming up soon
                                              TextSendMessage(text='removed')])
                 note.pop(int(index)-1)
 
-            elif text == 'yorha':
-                line_bot_api.reply_message(event.reply_token,TextSendMessage(text='done'))
-                image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg',preview_image_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
-                line_bot_api.reply_message(event.reply_token,image_message)
+           
                                            
             elif text[:len('release')] == 'release': #release <<index>>
                 try :
