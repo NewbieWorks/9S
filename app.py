@@ -50,7 +50,7 @@ from datetime import datetime
 import string
 import random
 import smtplib as s
-import emoji
+import wikipedia
 
 app = Flask(__name__)
 
@@ -322,10 +322,19 @@ and Other Command Coming up soon
         note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
-    elif text == 'yorha':
-        image_message = ImageSendMessage(original_content_url='https://images-cdn.9gag.com/photo/ad9GzQj_700b.jpg')
-        line_bot_api.reply_message(event.reply_token,image_message)
+    elif text[:len('wiki sum')] == 'wiki sum':
+        to_search = text[len('wiki sum')+1:]
+        
+        try :
+            texti = wikipedia.summary(to_search)
+        except wikipedia.exceptions.DisambiguationError :
+            texti = '{} disambiguation:\n'.format(to_search) + '\n'.join(wikipedia.search(to_search))
+        except Exception as e :
+            texti = e
+        
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=texti))
 
+        
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
             if text == ':send user' : #:send user
