@@ -86,6 +86,7 @@ def make_static_tmp_dir():
         
 # accessing dropbox 
 def drpbox(file) :
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='calling ...'))
     number == 101
     try :
         while number < 1000 :
@@ -477,8 +478,9 @@ def handle_content_message(event):
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
         for chunk in message_content.iter_content():
             fd.write(chunk)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part 2 clear'))
+            fd.seek(0)
         toSend = drpbox(fd)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part 4 clear'))
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
                 
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
