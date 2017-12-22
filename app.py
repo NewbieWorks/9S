@@ -83,25 +83,7 @@ def make_static_tmp_dir():
             pass
         else:
             raise
-        
-# accessing dropbox 
-def drpbox(file) :
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='calling ...'))
-    number == 101
-    try :
-        while number < 1000 :
-            try :
-                if servant.files_download('/{}.jpg'.format(str(number)))[1].content == file.read() :
-                    return str(number)
-                else :
-                    number += 1
-            except :
-                number += 1
-            
-        return 'rewind the progress'
-    
-    except Exception as e:
-        return e
+           
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -479,9 +461,31 @@ def handle_content_message(event):
         for chunk in message_content.iter_content():
             fd.write(chunk)
             fd.seek(0)
+            
+        number = 101
+        try :
+            servant.files_download('/{}.jpg'.format(str(number)))[1].content
+        except :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='syntax not save'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='syntax safe'))
+        
+        try :
+            while number < 1000 :
+                try :
+                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == file.read() :
+                        toSend= str(number)
+                    else :
+                        number += 1
+                except :
+                    number += 1
+                
+            toSend= 'rewind the progress'
+        
+        except Exception as e:
+            toSend= e
         toSend = drpbox(fd)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part 4 clear'))
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
                 
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
