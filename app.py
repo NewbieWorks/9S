@@ -467,7 +467,7 @@ def handle_content_message(event):
         try :
             while number < 1000 :
                 try :
-                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == file.read() :
+                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
                         toSend = str(number)
                     else :
                         number += 1
