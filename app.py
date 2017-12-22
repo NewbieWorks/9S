@@ -477,6 +477,7 @@ def handle_content_message(event):
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
         for chunk in message_content.iter_content():
             fd.write(chunk)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part 2 clear'))
         toSend = drpbox(fd)
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
                 
