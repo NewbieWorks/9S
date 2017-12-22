@@ -463,28 +463,22 @@ def handle_content_message(event):
             fd.seek(0)
             
         number = 101
-        try :
-            servant.files_download('/{}.jpg'.format(str(number)))[1].content
-        except :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='syntax not save'))
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='syntax safe'))
-        
+        toSend = 'rewind'
         try :
             while number < 1000 :
                 try :
                     if servant.files_download('/{}.jpg'.format(str(number)))[1].content == file.read() :
-                        toSend= str(number)
+                        toSend = str(number)
                     else :
                         number += 1
                 except :
                     number += 1
+            if toSend == 'rewind' :
+                toSend = 'Not Found'
                 
-            toSend= 'rewind the progress'
-        
         except Exception as e:
             toSend= e
-        toSend = drpbox(fd)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='part 4 clear'))
+        
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
                 
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
