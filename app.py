@@ -1,19 +1,3 @@
-#-*- coding: utf-8 -*-
-
-#  Licensed under the Apache License, Version 2.0 (the "License"); you may
-#  not use this file except in compliance with the License. You may obtain
-#  a copy of the License at
-#
-#       https://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#  License for the specific language governing permissions and limitations
-#  under the License.
-
-
-
 from __future__ import unicode_literals
 
 
@@ -462,28 +446,27 @@ def handle_content_message(event):
 
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
         for chunk in message_content.iter_content():
-            fd.write(chunk)
-            
-            fd.seek(0)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=fd.read()[:100]))
+            a = fd.write(chunk) 
+        b = fd.seek(0)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=fd.read()[:100]))
 
-            number = 101
-            try :
-                while number < 1000 :
-                    try :
-                        if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
-                            toSend = str(number)
-                        else :
-                            number += 1
-                    except :
-                            number += 1
-                if toSend == 'rewind' :
-                    toSend = 'Not Found'
-                    
-            except Exception as e:
-                toSend = e
-            
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+        number = 101
+        try :
+            while number < 1000 :
+                try :
+                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
+                        toSend = str(number)
+                    else :
+                        number += 1
+                except :
+                        number += 1
+            if toSend == 'rewind' :
+                toSend = 'Not Found'
+                
+        except Exception as e:
+            toSend = e
+        
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
 ##                
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
