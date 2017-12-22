@@ -471,7 +471,7 @@ and Other Command Coming up soon
 
 @handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 def handle_content_message(event):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='welcome to yokoso'))
+
     message_content = line_bot_api.get_message_content(event.message.id)
 
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
