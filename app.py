@@ -51,6 +51,7 @@ import string
 import random
 import smtplib as s
 import wikipedia
+import dropbox
 
 app = Flask(__name__)
 
@@ -67,6 +68,9 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+dropboxAcc = os.getenv('DROPBOX_ACCESS_TOKEN', None)
+servant = dropbox.Dropbox(dropboxAcc)
+
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 
@@ -79,7 +83,24 @@ def make_static_tmp_dir():
             pass
         else:
             raise
-
+        
+# accessing dropbox 
+def drpbox(file) :
+    number == 101
+    try :
+        while number < 1000 :
+            try :
+                if servant.files_download('/{}.jpg'.format(str(number)))[1].content == file.read() :
+                    return str(number)
+                else :
+                    number += 1
+            except :
+                number += 1
+            
+        return 'rewind the progress'
+    
+    except Exception as e:
+        return e
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -237,7 +258,7 @@ and Other Command Coming up soon
 ##        line_bot_api.reply_message(event.reply_token, template_message)
 ##
             
-    elif 'echo switch' in text:
+    elif 'echo switch' in text: # echo switch (on/off)
         global echo
         
         if 'on' in text :
@@ -252,7 +273,7 @@ and Other Command Coming up soon
             echo = True
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
-    elif echo :
+    elif echo : ##if echo == True / switchen on
         profile = line_bot_api.get_profile(event.source.user_id)
         
         if profile.display_name in hist.keys() :
@@ -293,6 +314,7 @@ and Other Command Coming up soon
         WIB = pytz.timezone('Asia/Jakarta')
         WITA = pytz.timezone('Asia/Makassar')
         WIT = pytz.timezone('Asia/Jayapura')
+        
         nowWIB = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIB).hour),
                                                         str(datetime.now(WIB).minute),
                                                         str(datetime.now(WIB).second),
@@ -317,12 +339,12 @@ and Other Command Coming up soon
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(text='{:<6s} : {}\n{:<6s}: {}\n{:<6s} : {}'.format('WIB',nowWIB,'WITA',nowWITA,'WIT',nowWIT)))
 
-    elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) :
+    elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) : #note:<<text>>
         global note
         note.append(text[5:])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
-    elif text[:len('wiki sum')] == 'wiki sum':
+    elif text[:len('wiki sum')] == 'wiki sum': #wiki sub <<text>>
         to_search = text[len('wiki sum')+1:]
         
         try :
@@ -358,8 +380,6 @@ and Other Command Coming up soon
                                             [TextSendMessage(text='removing : ' + note[int(index)-1]),
                                              TextSendMessage(text='removed')])
                 note.pop(int(index)-1)
-
-           
                                            
             elif text[:len('release')] == 'release': #release <<index>>
                 try :
@@ -367,6 +387,10 @@ and Other Command Coming up soon
                 except :
                     index = '0'
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
+
+##            elif text == ':bugreport' :
+##                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
+                
         except Exception as e :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
 
@@ -444,6 +468,18 @@ and Other Command Coming up soon
 ##
 ##
 ### Other Message Type
+
+@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
+def handle_content_message(event):
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='welcome to yokoso'))
+    message_content = line_bot_api.get_message_content(event.message.id)
+
+    with tempfile.NamedTemporaryFile(mode='rb+') as fd :
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
+        toSend = drpbox(fd)
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+                
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
 ##    if isinstance(event.message, ImageMessage):
