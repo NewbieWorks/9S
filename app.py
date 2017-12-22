@@ -445,6 +445,14 @@ def handle_content_message(event):
     message_content = line_bot_api.get_message_content(event.message.id)
 
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
+        
+        try :
+            fd.write(message_content)
+        except Exception as e :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='cant write directly'))
+            
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='it works'))
+        
         for chunk in message_content.iter_content():
             a = fd.write(chunk) 
         b = fd.seek(0)
