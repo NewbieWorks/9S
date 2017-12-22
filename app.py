@@ -44,7 +44,7 @@ from linebot.models import (
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
 
-from time import gmtime, strftime
+from time import gmtime, strftime, sleep
 import pytz
 from datetime import datetime
 import string
@@ -154,7 +154,10 @@ and Other Command Coming up soon
         else:
             line_bot_api.reply_message(  event.reply_token,
                                          TextMessage(text="Bot can't use profile API without user ID"))
-            
+    elif text == 'sleep' :
+        sleep(5)
+        line_bot_api.reply_message(  event.reply_token,
+                                         TextMessage(text="sleep for 5 second done"))
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(event.reply_token,
@@ -461,9 +464,8 @@ def handle_content_message(event):
         for chunk in message_content.iter_content():
             fd.write(chunk)
             fd.seek(0)
-            
-                
-            
+
+            number = 101
             try :
                 while number < 1000 :
                     try :
