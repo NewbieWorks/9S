@@ -463,7 +463,9 @@ def handle_content_message(event):
     with tempfile.NamedTemporaryFile(mode='rb+') as fd :
         for chunk in message_content.iter_content():
             fd.write(chunk)
+            
             fd.seek(0)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=fd.read()[:100]))
 
             number = 101
             try :
