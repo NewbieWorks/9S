@@ -472,12 +472,13 @@ def handle_content_message(event):
                     else :
                         number += 1
                 except :
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='exceping {}'.format(str(number)))
                     number += 1
             if toSend == 'rewind' :
                 toSend = 'Not Found'
                 
         except Exception as e:
-            toSend= e
+            toSend = e
         
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
                 
