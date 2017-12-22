@@ -462,38 +462,25 @@ def handle_content_message(event):
             fd.write(chunk)
             fd.seek(0)
             
-            number = 101
-            toSend = 'rewind'
-            save = 0
+                
+            
             try :
-                servant.files_download('/{}.jpg'.format(str(number)))[1].content
-                save = 1
-                fd.read()
-                save = 2
-                servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read()
-                save = 3
-            except :
-                pass
-            finally :
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='save : {}'.format(str(save))))
-##        
-##        try :
-##            while number < 1000 :
-##                try :
-##                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
-##                        toSend = str(number)
-##                    else :
-##                        number += 1
-##                except :
-##                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='exceping {}'.format(str(number)))
-##                    number += 1
-##            if toSend == 'rewind' :
-##                toSend = 'Not Found'
-##                
-##        except Exception as e:
-##            toSend = e
-##        
-##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+                while number < 1000 :
+                    try :
+                        if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
+                            toSend = str(number)
+                        else :
+                            number += 1
+                    except :
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='exceping {}'.format(str(number))))
+                        number += 1
+                if toSend == 'rewind' :
+                    toSend = 'Not Found'
+                    
+            except Exception as e:
+                toSend = e
+            
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
 ##                
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
