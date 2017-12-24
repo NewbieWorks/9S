@@ -49,7 +49,7 @@ if channel_access_token is None:
     print('Specify LINE_CHANNEL_ACCESS_TOKEN as environment variable.')
     sys.exit(1)
 
-#line_bot_api = LineBotApi(channel_access_token)
+line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 dropboxAcc = os.getenv('DROPBOX_ACCESS_TOKEN', None)
@@ -255,7 +255,8 @@ and Other Command Coming up soon
         
             
     elif text in sapaan or 'selamat' in text.lower().split() :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
+        if 'natal' not in text :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
 
     elif text[:len('send mail to ')] == 'send mail to ' : #send mail to <<email>> , <<message>>
         try :
@@ -438,43 +439,8 @@ and Other Command Coming up soon
 ##
 ##
 ### Other Message Type
-
-@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
-def handle_content_message(event):
-
-    message_content = line_bot_api.get_message_content(event.message.id)
-
-    with tempfile.NamedTemporaryFile(mode='rb+') as fd :
         
-        try :
-            fd.write(message_content)
-        except Exception as e :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='cant write directly'))
-            
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='it works'))
-        
-        for chunk in message_content.iter_content():
-            a = fd.write(chunk) 
-        b = fd.seek(0)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=fd.read()[:100]))
-
-        number = 101
-        try :
-            while number < 1000 :
-                try :
-                    if servant.files_download('/{}.jpg'.format(str(number)))[1].content == fd.read() :
-                        toSend = str(number)
-                    else :
-                        number += 1
-                except :
-                        number += 1
-            if toSend == 'rewind' :
-                toSend = 'Not Found'
-                
-        except Exception as e:
-            toSend = e
-        
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+      
 ##                
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
