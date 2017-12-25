@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+rom __future__ import unicode_literals
 
 
 import errno
@@ -92,6 +92,7 @@ def handle_text_message(event):
     text_raw = event.message.text
     text = text_raw.lower()
     text_split=text.split()
+    profile = line_bot_api.get_profile(event.source.user_id)
 
     if text == 'info' :
         display ='''[[~Command for 9S~]]
@@ -123,15 +124,19 @@ show 9S's Command
 
 
 and Other Command Coming up soon
-(if my master not watching anime)'''
+(if my master not too busy watching anime)
+
+admin :
+{} '''.format('\n'.join(administrators))
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
 
+    elif text == 'set admin'
+        administrators.append(profile.display_name)
                                                          
     
     elif text == 'profile':
         if isinstance(event.source, SourceUser):
-            profile = line_bot_api.get_profile(event.source.user_id)
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
@@ -244,8 +249,6 @@ and Other Command Coming up soon
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
     elif echo : ##if echo == True / switchen on
-        profile = line_bot_api.get_profile(event.source.user_id)
-        
         if profile.display_name in hist.keys() :
             hist[profile.display_name] += '\n{}'.format(text_raw)
         else :
@@ -255,15 +258,24 @@ and Other Command Coming up soon
         
             
     elif text in sapaan or 'selamat' in text.lower().split() :
+<<<<<<< HEAD
+        if 'natal' in text :
+            pass
+        else :
+=======
         if 'natal' not in text :
+>>>>>>> c05f3159609750e094170e9dacade3d55e2a69f6
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
 
     elif text[:len('send mail to ')] == 'send mail to ' : #send mail to <<email>> , <<message>>
         try :
+            splited = text.split()
             sender = 'newbieworkslinebot@gmail.com'
             password = 'nathanaelX1'
-            receiver = text[len('send mail to '):text.find(',')]
-            msg = text[text.find(',')+1:]
+            for each in  splited :
+                if '@' in splited :
+                    receiver = each
+            msg = ' '.join(b[b.index(',')+1:])
 
             server = s.SMTP('smtp.gmail.com', 587)
             server.starttls()
@@ -276,7 +288,6 @@ and Other Command Coming up soon
             
         except Exception as e:
             now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
-            profile = line_bot_api.get_profile(event.source.user_id)
             bugreport.append((profile.display_name,now,e))
             line_bot_api.reply_message(event.reply_token, TextMessage(text='Error : {}'.format(e)))
                 
@@ -312,7 +323,7 @@ and Other Command Coming up soon
 
     elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) : #note:<<text>>
         global note
-        note.append(text[5:])
+        note.append(text[text.find(':'):])
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
     elif text[:len('wiki sum')] == 'wiki sum': #wiki sub <<text>>
@@ -330,16 +341,16 @@ and Other Command Coming up soon
         
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
-            if text == ':send user' : #:send user
+            if text == ':send user' : #:send user #to show who the users
                 text_to_send = ', '.join(hist.keys())
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
-            elif text[:len('send')] == 'send' : #send:<<name>>
+            elif text[:len('send')] == 'send' : #send:<<name>> #to show user's input
                 key = text_raw[text_raw.find(':')+1:]
                 hist_to_send = hist[key]
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
 
-            elif 'clear' in text : # (note/hist/bugreport):clear
+            elif 'clear' in text : # (note/hist/bugreport/administrators):clear
                 ob_to_clear = text[0:text.find(':')]
                 exec('{}.clear()'.format(ob_to_clear))
                 line_bot_api.reply_message(event.reply_token,
@@ -359,8 +370,11 @@ and Other Command Coming up soon
                     index = '0'
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
-##            elif text == ':bugreport' :
-##                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
+            elif text == ':bugreport' :
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(bugreport)))
+
+            elif text == ':administrators' :
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(administrators)))
                 
         except Exception as e :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
@@ -380,20 +394,25 @@ and Other Command Coming up soon
     elif 'count' in text :
         try :
             a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
-            numerik = text[text.find('(')+1:-1]
+            numerik = ''
+            for i in text :
+                try :
+                    numerik += str(int(i))
+                except :
+                    pass
+                
             number = int(numerik)
             for i in range(number,0,-1) :
-                a += "TextSendMessage(text='Count : ' + str(i)),"
+                a += "TextSendMessage(text='Count : {}' ),".format(str(i))
             else :
                 a = a[:-1] + "])"
+                
             exec(a)
             
-        except Exception :
+        except Exception as e:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
             
-    else :
-        profile = line_bot_api.get_profile(event.source.user_id)
-        
+    else :     
         if profile.display_name in hist.keys() :
             hist[profile.display_name] += '\n{}'.format(text)
         else :
@@ -402,9 +421,9 @@ and Other Command Coming up soon
         if text in profile.display_name :
             if isinstance(event.source, SourceUser):
                 line_bot_api.reply_message(  event.reply_token,
-                                            [TextSendMessage( text= profile.display_name + ', aku mau kasi tau sesuatu' ),
-                                             TextSendMessage( text='aku ini cuma bot yang sudah diskontinu(mungkin)'  ),
-                                             TextSendMessage( text='Jadi maaf, aku gak punya perintah lain\n selain yang ada di /info'  )] )
+                                            [TextSendMessage( text= profile.display_name + ', Let\'s Join NewbieWorks...' ),
+                                             TextSendMessage( text='I\'m my master\'s bot'  ),
+                                             TextSendMessage( text='Part of NewbieWorks'  )] )
 
 ## ------------------project birthday reminder-------------------------------------
 ##        elif str(datetime.now(pytz.utc).minute) == '5' :
@@ -542,6 +561,7 @@ note = []
 kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
 hist = {}
 bugreport = []
+administrators = []
 
 #----------------------------------------------------end---------------------------------------------#
 
