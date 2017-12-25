@@ -249,7 +249,7 @@ admin :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
     elif text[0:len('echo:')] == 'echo:':
-        toRepeat = text.split(':')[1]
+        toRepeat = text_raw.split(':')[1]
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toRepeat))
 
     elif echo : ##if echo == True / switchen on
