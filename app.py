@@ -1,4 +1,4 @@
-rom __future__ import unicode_literals
+from __future__ import unicode_literals
 
 
 import errno
@@ -130,9 +130,9 @@ admin :
 {} '''.format('\n'.join(administrators))
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
-
-    elif text == 'set admin'
-        administrators.append(profile.display_name)
+##
+##    elif text == 'set admin' :
+##        administrators.append(profile.display_name)
                                                          
     
     elif text == 'profile':
@@ -146,7 +146,7 @@ admin :
     elif text == 'sleep' :
         sleep(5)
         line_bot_api.reply_message(  event.reply_token,
-                                         TextMessage(text="sleep for 5 second done"))
+                                         TextMessage(text="I've sleep for 5 second"))
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(event.reply_token,
@@ -248,6 +248,10 @@ admin :
             echo = True
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
 
+    elif text[0:len('echo:')] == 'echo:':
+        toRepeat = text.split(':')[1]
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toRepeat))
+
     elif echo : ##if echo == True / switchen on
         if profile.display_name in hist.keys() :
             hist[profile.display_name] += '\n{}'.format(text_raw)
@@ -258,13 +262,9 @@ admin :
         
             
     elif text in sapaan or 'selamat' in text.lower().split() :
-<<<<<<< HEAD
         if 'natal' in text :
             pass
         else :
-=======
-        if 'natal' not in text :
->>>>>>> c05f3159609750e094170e9dacade3d55e2a69f6
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
 
     elif text[:len('send mail to ')] == 'send mail to ' : #send mail to <<email>> , <<message>>
