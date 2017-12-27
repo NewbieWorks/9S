@@ -95,17 +95,18 @@ def handle_text_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
 
     if isinstance(event.source, SourceUser):
-            waktu = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
-                                                         str(datetime.now(WITA).minute),
-                                                         str(datetime.now(WITA).second),
-                                                         str(datetime.now(WITA).month) ,
-                                                         str(datetime.now(WITA).day) ,
-                                                         str(datetime.now(WITA).year))
-            
-            if profile.display_name in hist.keys() :
-                hist[profile.display_name] += '\n{} : {}'.format(waktu,text_raw)
-            else :
-                hist[profile.display_name] = '{} : {}'.format(waktu,text_raw)
+        WITA = pytz.timezone('Asia/Makassar')
+        waktu = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
+                                                     str(datetime.now(WITA).minute),
+                                                     str(datetime.now(WITA).second),
+                                                     str(datetime.now(WITA).month) ,
+                                                     str(datetime.now(WITA).day) ,
+                                                     str(datetime.now(WITA).year))
+        
+        if profile.display_name in hist.keys() :
+            hist[profile.display_name] += '\n{} : {}'.format(waktu,text_raw)
+        else :
+            hist[profile.display_name] = '{} : {}'.format(waktu,text_raw)
             
 
     if text in ('info','help','/help','keywords','keyword') :
