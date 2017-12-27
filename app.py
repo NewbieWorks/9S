@@ -94,7 +94,7 @@ def handle_text_message(event):
     text_split=text.split()
     profile = line_bot_api.get_profile(event.source.user_id)
 
-    if text == 'info' :
+    if text in ('info','help','/help','keywords','keyword') :
         display ='''[[~Command for 9S~]]
 ====NewbieWorks====
 I Learn New Command Everyday ~~
@@ -457,9 +457,7 @@ admin :
 ##    )
 ##
 ##
-### Other Message Type
-        
-      
+### Other Message Type      
 ##                
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
@@ -525,9 +523,7 @@ def handle_unfollow():
 
 @handler.add(JoinEvent)
 def handle_join(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text='Hello :D')) # + event.source.type)) return room / group
+    line_bot_api.reply_message( event.reply_token, TextSendMessage(text='Hello :D')) # + event.source.type)) return room / group
 
 
 @handler.add(LeaveEvent)
