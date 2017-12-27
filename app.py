@@ -94,6 +94,20 @@ def handle_text_message(event):
     text_split=text.split()
     profile = line_bot_api.get_profile(event.source.user_id)
 
+    if isinstance(event.source, SourceUser):
+            waktu = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
+                                                         str(datetime.now(WITA).minute),
+                                                         str(datetime.now(WITA).second),
+                                                         str(datetime.now(WITA).month) ,
+                                                         str(datetime.now(WITA).day) ,
+                                                         str(datetime.now(WITA).year))
+            
+            if profile.display_name in hist.keys() :
+                hist[profile.display_name] += '\n{} : {}'.format(waktu,text_raw)
+            else :
+                hist[profile.display_name] = '{} : {}'.format(waktu,text_raw)
+            
+
     if text in ('info','help','/help','keywords','keyword') :
         display ='''[[~Command for 9S~]]
 ====NewbieWorks====
@@ -101,26 +115,26 @@ I Learn New Command Everyday ~~
 
 here's some command :
 
-profile :
+Profile :
 send your display name and status message
 
-bye :
+Bye :
 remove 9S from Group or Room
 
-echo switch (on/off) :
+Echo switch (on/off) :
 turn (on/off) the echo
 
-send mail to <<email>> , <<message>> :
-send <<message>> to <<email>>
+Send mail to <<email>> , <<message>> :
+send the message to email from NewbieWorksLineBot@gmail.com
 
-time :
+Time :
 the answer for 'What time is it?'
 
-apakah <<question>> ? :
+Apakah <<question>> ? :
 Mirror from Kerang Ajaib bot
 
-info :
-show 9S's Command
+Info :
+show 9S's Commands
 
 
 and Other Command Coming up soon
@@ -412,12 +426,8 @@ admin :
         except Exception as e:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
             
-    else :     
-        if profile.display_name in hist.keys() :
-            hist[profile.display_name] += '\n{}'.format(text)
-        else :
-            hist[profile.display_name] = text
-            
+    else :
+        
         if text in profile.display_name :
             if isinstance(event.source, SourceUser):
                 line_bot_api.reply_message(  event.reply_token,
