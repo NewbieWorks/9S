@@ -544,18 +544,21 @@ def handle_postback(event):
     elif event.postback.data == 'send' :
         anchor = len(hist.keys())
         if anchor == 1 :
-            buttons_template = ButtonsTemplate(title='User Logs',
-                                               text='Users :',
-                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
-                                                        ]
-                                               )
+            buttons_template = ButtonsTemplate(
+                title='User Logs', text='Users :', actions=[
+                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
+                    ])
+
+        elif anchor == 0 :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='No User'))
+            
         elif anchor == 2 :
-            buttons_template = ButtonsTemplate(title='User Logs',
-                                               text='Users :',
-                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
-                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1])
-                                                        ]
-                                               )
+            buttons_template = ButtonsTemplate(
+                title='User Logs', text='Users :', actions=[
+                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
+                    PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1])
+                    ])
+            
         elif anchor == 3 :
             buttons_template = ButtonsTemplate(title='User Logs',
                                                text='Users :',
