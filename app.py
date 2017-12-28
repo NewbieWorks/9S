@@ -542,6 +542,7 @@ def handle_postback(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
     elif event.postback.data == 'send' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='calling complete'))
         anchor = len(hist.keys())
         if anchor == 1 :
             buttons_template = ButtonsTemplate(
