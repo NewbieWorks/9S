@@ -544,50 +544,45 @@ def handle_postback(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
     elif event.postback.data == 'send' :
-        anchor = len(hist.keys())
+        people = []
+        for i in hist.keys() :
+            people.append(i)
+        anchor = len(people)
+        
         if anchor == 1 :
-##            buttons_template = ButtonsTemplate(
-##                title='User Logs', text='Users :', actions=[
-##                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
-##                    ])
             buttons_template = ButtonsTemplate(
-                title='ADMIN_MODE', text='Commands', actions=[
-                    PostbackTemplateAction(label='Users', data=':send user'),
-                    PostbackTemplateAction(label='Send User Log', data='send'),
-                    #MessageTemplateAction(label='Translate Rice', text='米')
+                title='User Logs', text='Users :', actions=[
+                    PostbackTemplateAction(label=people[0], data=people[0])
                     ])
-            template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
-            line_bot_api.reply_message(event.reply_token, template_message)
             
-
         elif anchor == 0 :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='No User'))
             
         elif anchor == 2 :
             buttons_template = ButtonsTemplate(
                 title='User Logs', text='Users :', actions=[
-                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
-                    PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1])
+                    PostbackTemplateAction(label=people[0], data=people[0]),
+                    PostbackTemplateAction(label=people[1], data=people[1])
                     ])
             
         elif anchor == 3 :
             buttons_template = ButtonsTemplate(title='User Logs',
                                                text='Users :',
-                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
-                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1]),
-                                                        PostbackTemplateAction(label=hist.keys()[2], data=hist.keys()[2])
+                                               actions=[PostbackTemplateAction(label=people[0], data=people[0]),
+                                                        PostbackTemplateAction(label=people[1], data=people[1]),
+                                                        PostbackTemplateAction(label=people[2], data=people[2])
                                                         ]
                                                )
         elif anchor > 3 :
             buttons_template = ButtonsTemplate(title='User Logs',
                                                text='Users :',
-                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
-                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1]),
-                                                        PostbackTemplateAction(label=hist.keys()[2], data=hist.keys()[2]),
+                                               actions=[PostbackTemplateAction(label=people[0], data=people[0]),
+                                                        PostbackTemplateAction(label=people[1], data=people[1]),
+                                                        PostbackTemplateAction(label=people[2], data=people[2]),
                                                         PostbackTemplateAction(label='next', data='send 2'),
                                                         ]
                                                )
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='template complete'))
+
         template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
 
