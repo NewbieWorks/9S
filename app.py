@@ -428,6 +428,8 @@ admin :
                                             [TextSendMessage( text= profile.display_name + ', Let\'s Join NewbieWorks...' ),
                                              TextSendMessage( text='I\'m my master\'s bot'  ),
                                              TextSendMessage( text='Part of NewbieWorks'  )] )
+        else :
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=exec(text_raw)))
 
 ## ------------------project birthday reminder-------------------------------------
 ##        elif str(datetime.now(pytz.utc).minute) == '5' :
@@ -544,10 +546,19 @@ def handle_postback(event):
     elif event.postback.data == 'send' :
         anchor = len(hist.keys())
         if anchor == 1 :
+##            buttons_template = ButtonsTemplate(
+##                title='User Logs', text='Users :', actions=[
+##                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
+##                    ])
             buttons_template = ButtonsTemplate(
-                title='User Logs', text='Users :', actions=[
-                    PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
+                title='ADMIN_MODE', text='Commands', actions=[
+                    PostbackTemplateAction(label='Users', data=':send user'),
+                    PostbackTemplateAction(label='Send User Log', data='send'),
+                    #MessageTemplateAction(label='Translate Rice', text='米')
                     ])
+            template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+            line_bot_api.reply_message(event.reply_token, template_message)
+            
 
         elif anchor == 0 :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text='No User'))
