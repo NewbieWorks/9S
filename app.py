@@ -189,19 +189,15 @@ admin :
 ##                                                       TextSendMessage(text=profile.user_id),
 ##                                                       TextSendMessage(text=profile.picture_url)])
 ##
-##    elif text == 'buttons':
-##        buttons_template = ButtonsTemplate(
-##            title='My buttons sample', text='Hello, my buttons', actions=[
-##                URITemplateAction(
-##                    label='Go to line.me', uri='https://line.me'),
-##                PostbackTemplateAction(label='ping', data='ping'),
-##                PostbackTemplateAction(
-##                    label='ping with text', data='ping',
-##                    text='ping'),
-##                MessageTemplateAction(label='Translate Rice', text='米')
-##            ])
-##        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
-##        line_bot_api.reply_message(event.reply_token, template_message)
+    elif text == 'admin mode':
+        buttons_template = ButtonsTemplate(
+            title='ADMIN_MODE', text='Commands', actions=[
+                PostbackTemplateAction(label='Users', data=':send user')#,
+                #PostbackTemplateAction(label='ping with text', data='ping'),
+                #MessageTemplateAction(label='Translate Rice', text='米')
+                ])
+        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+        line_bot_api.reply_message(event.reply_token, template_message)
 ##        
 ##    elif text == 'carousel':
 ##        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
@@ -356,11 +352,8 @@ admin :
         
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
-            if text == ':send user' : #:send user #to show who the users
-                text_to_send = ', '.join(hist.keys())
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
-            elif text[:len('send')] == 'send' : #send:<<name>> #to show user's input
+            if text[:len('send')] == 'send' : #send:<<name>> #to show user's input
                 key = text_raw[text_raw.find(':')+1:]
                 hist_to_send = hist[key]
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
@@ -544,9 +537,11 @@ def handle_leave():
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    if event.postback.data == 'ping':
-        line_bot_api.reply_message(
-            event.reply_token, TextSendMessage(text='pong'))
+    if event.postback.data == ':send user':
+        text_to_send = ', '.join(hist.keys())
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+    
+
     elif event.postback.data == 'datetime_postback':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.postback.params['datetime']))
