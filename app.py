@@ -542,11 +542,38 @@ def handle_postback(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
     elif event.postback.data == 'send' :
-        getter = '''buttons_template = ButtonsTemplate(title='User Logs', text='Users :', actions=['''
-        for i in hist.keys() :
-            getter += '''PostbackTemplateAction(label=i, data=i),'''
-        real_getter = getter[:-1] + '''])'''
-        exec(real_getter)
+        anchor = len(hist.keys())
+        if anchor == 1 :
+            buttons_template = ButtonsTemplate(title='User Logs',
+                                               text='Users :',
+                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0])
+                                                        ]
+                                               )
+        elif anchor == 2 :
+            buttons_template = ButtonsTemplate(title='User Logs',
+                                               text='Users :',
+                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
+                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1])
+                                                        ]
+                                               )
+        elif anchor == 3 :
+            buttons_template = ButtonsTemplate(title='User Logs',
+                                               text='Users :',
+                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
+                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1]),
+                                                        PostbackTemplateAction(label=hist.keys()[2], data=hist.keys()[2])
+                                                        ]
+                                               )
+        elif anchor > 3 :
+            buttons_template = ButtonsTemplate(title='User Logs',
+                                               text='Users :',
+                                               actions=[PostbackTemplateAction(label=hist.keys()[0], data=hist.keys()[0]),
+                                                        PostbackTemplateAction(label=hist.keys()[1], data=hist.keys()[1]),
+                                                        PostbackTemplateAction(label=hist.keys()[2], data=hist.keys()[2]),
+                                                        PostbackTemplateAction(label='next', data='send 2'),
+                                                        ]
+                                               )
+        
         template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
 
