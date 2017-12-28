@@ -192,8 +192,8 @@ admin :
     elif text == 'admin mode':
         buttons_template = ButtonsTemplate(
             title='ADMIN_MODE', text='Commands', actions=[
-                PostbackTemplateAction(label='Users', data=':send user')#,
-                #PostbackTemplateAction(label='ping with text', data='ping'),
+                PostbackTemplateAction(label='Users', data=':send user'),
+                PostbackTemplateAction(label='Send User Log', data='send'),
                 #MessageTemplateAction(label='Translate Rice', text='米')
                 ])
         template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
@@ -540,6 +540,19 @@ def handle_postback(event):
     if event.postback.data == ':send user':
         text_to_send = ', '.join(hist.keys())
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
+
+    elif event.postback.data == 'send' :
+        getter = '''buttons_template = ButtonsTemplate(title='User Logs', text='Users :', actions=['''
+        for i in hist.keys() :
+            getter += '''PostbackTemplateAction(label=i, data=i),'''
+        real_getter = getter[:-1] + '''])'''
+        exec(real_getter)
+        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+        line_bot_api.reply_message(event.reply_token, template_message)
+
+    elif event.postback.data in hist.keys() :
+        hist_to_send = hist[event.postback.data]
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
     
 
     elif event.postback.data == 'datetime_postback':
