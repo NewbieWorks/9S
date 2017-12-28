@@ -542,7 +542,6 @@ def handle_postback(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
 
     elif event.postback.data == 'send' :
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='calling complete'))
         anchor = len(hist.keys())
         if anchor == 1 :
             buttons_template = ButtonsTemplate(
@@ -577,7 +576,7 @@ def handle_postback(event):
                                                         PostbackTemplateAction(label='next', data='send 2'),
                                                         ]
                                                )
-        
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='template complete'))
         template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
 
