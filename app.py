@@ -132,7 +132,7 @@ Time :
 the answer for 'What time is it?'
 
 Apakah <<question>> ? :
-Mirror from Kerang Ajaib bot
+Mirrored from Kerang Ajaib bot
 
 Info :
 show 9S's Commands
@@ -145,11 +145,10 @@ admin :
 {} '''.format('\n'.join(administrators))
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
-##
-##    elif text == 'set admin' :
-##        administrators.append(profile.display_name)
+
+    elif text == 'set admin' :
+        administrators.append(profile.display_name)
                                                          
-    
     elif text == 'profile':
         if isinstance(event.source, SourceUser):
             line_bot_api.reply_message(  event.reply_token,
@@ -169,7 +168,7 @@ admin :
             text_message = TextSendMessage(text='so sad ._.')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine') )
+            line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine!') )
             line_bot_api.leave_room(event.source.room_id) 
         else:
             line_bot_api.reply_message( event.reply_token,
@@ -246,7 +245,6 @@ admin :
             
     elif 'echo switch' in text: # echo switch (on/off)
         global echo
-        
         if 'on' in text :
             echo = False
         elif 'off' in text :
@@ -278,21 +276,18 @@ admin :
         else :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
 
-    elif text[:len('send mail to ')] == 'send mail to ' : #send mail to <<email>> , <<message>>
+    elif 'send mail to ' in text : #send mail to <<email>> , <<message>>
         try :
-            splited = text.split()
+            messages = text.split(',')[1]
             sender = 'newbieworkslinebot@gmail.com'
             password = 'nathanaelX1'
-            for each in  splited :
-                if '@' in splited :
-                    receiver = each
-            msg = ' '.join(b[b.index(',')+1:])
+            receiver = text.split(',')[0][len('send mail to '):-1]
 
             server = s.SMTP('smtp.gmail.com', 587)
             server.starttls()
             server.login(sender,password)
             
-            server.sendmail(sender,receiver, msg)
+            server.sendmail(sender,receiver, messages)
             server.quit()
 
             line_bot_api.reply_message(event.reply_token, TextMessage(text='Messsage Sended'))
@@ -339,7 +334,6 @@ admin :
 
     elif text[:len('wiki sum')] == 'wiki sum': #wiki sub <<text>>
         to_search = text[len('wiki sum')+1:]
-        
         try :
             texti = wikipedia.summary(to_search)
         except wikipedia.exceptions.DisambiguationError :
@@ -352,7 +346,6 @@ admin :
         
     elif ':' in text and isinstance(event.source, SourceUser):
         try : 
-
             if text[:len('send')] == 'send' : #send:<<name>> #to show user's input
                 key = text_raw[text_raw.find(':')+1:]
                 hist_to_send = hist[key]
@@ -613,6 +606,7 @@ kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
 hist = {}
 bugreport = []
 administrators = []
+birthdayList = [('Nathanael', 22, 9, 1999)]
 
 #----------------------------------------------------end---------------------------------------------#
 
