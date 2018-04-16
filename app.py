@@ -110,62 +110,28 @@ def handle_text_message(event):
             
 
     if text in ('info','help','/help','keywords','keyword') :
-        display ='''[[~Command for 9S~]]
-====NewbieWorks====
-I Learn New Command Everyday ~~
-
-here's some command :
-
-Profile :
-send your display name and status message
-
-Bye :
-remove 9S from Group or Room
-
-Echo switch (on/off) :
-turn (on/off) the echo
-
-Send mail to <<email>> , <<message>> :
-send the message to email from NewbieWorksLineBot@gmail.com
-
-Time :
-the answer for 'What time is it?'
-
-Apakah <<question>> ? :
-Mirrored from Kerang Ajaib bot
-
-Info :
-show 9S's Commands
-
-
-and Other Command Coming up soon
-(if my master not too busy watching anime)
-
-admin :
-{} '''.format('\n'.join(administrators))
-        
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
+        sendInfo()
 
     elif text == 'set admin' :
         administrators.append(profile.display_name)
                                                          
     elif text == 'profile':
-        if isinstance(event.source, SourceUser):
+        if isinstance(event.source, SourceUser): ## if this is personal chat
             line_bot_api.reply_message(  event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
-        else:
+        else: ## if this is personal chat
             line_bot_api.reply_message(  event.reply_token,
                                          TextMessage(text="Bot can't use profile API without user ID"))
+
     elif text == 'sleep' :
         sleep(5)
-        line_bot_api.reply_message(  event.reply_token,
-                                         TextMessage(text="I've sleep for 5 second"))
+        send("I've sleep for 5 second")
+
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
             line_bot_api.reply_message(event.reply_token,
                                        TextMessage(text='I\'ll be back ....'))
-            text_message = TextSendMessage(text='so sad ._.')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
             line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine!') )
@@ -187,7 +153,7 @@ admin :
 ##        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=profile.display_name),
 ##                                                       TextSendMessage(text=profile.user_id),
 ##                                                       TextSendMessage(text=profile.picture_url)])
-##
+
     elif text == 'admin mode':
         buttons_template = ButtonsTemplate(
             title='ADMIN_MODE', text='Commands', actions=[
@@ -372,10 +338,10 @@ admin :
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
             elif text == ':bugreport' :
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(bugreport)))
+                send('\n'.join(bugreport))
 
             elif text == ':administrators' :
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(administrators)))
+                send('\n'.join(administrators))
                 
         except Exception as e :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
@@ -607,6 +573,45 @@ hist = {}
 bugreport = []
 administrators = []
 birthdayList = [('Nathanael', 22, 9, 1999)]
+
+def send(toSend):
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+
+def sendInfo():
+    display = '''[[~Command for 9S~]]
+====NewbieWorks====
+I Learn New Command Everyday ~~
+
+here's some command :
+
+Profile :
+send your display name and status message
+
+Bye :
+remove 9S from Group or Room
+
+Echo switch (on/off) :
+turn (on/off) the echo
+
+Send mail to <<email>> , <<message>> :
+send the message to email from NewbieWorksLineBot@gmail.com
+
+Time :
+the answer for 'What time is it?'
+
+Apakah <<question>> ? :
+Mirrored from Kerang Ajaib bot
+
+Info :
+show 9S's Commands
+
+
+and Other Command Coming up soon
+(if my master not too busy watching anime)
+
+admin :
+{} '''.format('\n'.join(administrators))    
+    send(display)
 
 #----------------------------------------------------end---------------------------------------------#
 
