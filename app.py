@@ -113,7 +113,8 @@ def handle_text_message(event):
 
     elif text == 'set admin' :
         administrators.append(profile)
-        send(event.reply_token, "Admin Set!")
+        line_bot_api.reply_message(event.reply_token,
+                                       TextSendMessage(text="Admin Set!"))
                                                          
     elif text == 'profile':
         if isinstance(event.source, SourceUser): ## if this is personal chat
@@ -126,7 +127,8 @@ def handle_text_message(event):
 
     elif text == 'sleep' :
         sleep(5)
-        send(event.reply_token, "I've sleep for 5 second")
+        line_bot_api.reply_message(event.reply_token,
+                                       TextSendMessage(text="I've sleep for 5 second"))
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -226,7 +228,8 @@ def handle_text_message(event):
 
     elif text[0:len('echo:')] == 'echo:':
         toRepeat = text_raw.split(':')[1]
-        send(event.reply_token, toRepeat)
+            line_bot_api.reply_message(event.reply_token,
+                                           TextSendMessage(text=toRepeat))
 
     elif echo : ##if echo == True / switchen on
         if profile.display_name in hist.keys() :
@@ -240,7 +243,8 @@ def handle_text_message(event):
         if 'natal' in text :
             pass
         else :
-            send(event.reply_token, text.capitalize() + ' juga :D')
+            line_bot_api.reply_message(event.reply_token,
+                                           TextSendMessage(text=text.capitalize() + ' juga :D'))
 
     elif 'send mail to ' in text : #send mail to <<email>> , <<message>>
         try :
@@ -306,8 +310,9 @@ def handle_text_message(event):
             texti = '{} disambiguation:\n'.format(to_search) + '\n'.join(wikipedia.search(to_search))
         except Exception as e :
             texti = e
-        
-        send(event.reply_token, texti)
+
+        line_bot_api.reply_message(event.reply_token,
+                                           TextSendMessage(text=texti))
 
     elif ':' in text and isinstance(event.source, SourceUser): ##admin mode prototype
         try : 
@@ -332,13 +337,13 @@ def handle_text_message(event):
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
             elif text == ':bugreport' :
-                send(event.reply_token, '\n'.join(bugreport))
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(bugreport)))
 
             elif text == ':administrators' :
-                send(event.reply_token, '\n'.join(administrators))
+                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(administrators)))
                 
         except Exception as e :
-            send(event.reply_token, e)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
 
     elif text[:len('apakah')] == 'apakah' :
         yesorno = [ 'Ya' , 'Tidak' ]
@@ -356,7 +361,7 @@ def handle_text_message(event):
         toCreate = text_raw[len('newKey')+1:text.find(' as ')]
         theKey = text_raw[text.find(' as ')+4:]
         keys[theKey] = toCreate
-        send(event.reply_token, "I'll try to remember that :)")
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="I'll try to remember that :)"))
 
     else :
         
@@ -554,9 +559,6 @@ bugreport = []
 administrators = []
 birthdayList = [('Nathanael', 22, 9, 1999)]
 
-def send(pass1, toSend):
-    line_bot_api.reply_message(pass1, TextSendMessage(text=toSend))
-
 def sendInfo(pass1):
     display = '''[[~Command for 9S~]]
 ====NewbieWorks====
@@ -591,7 +593,8 @@ and Other Command Coming up soon
 
 admin :
 {} '''.format('\n'.join(administrators.display_name))    
-    send(pass1, display)
+    line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text=display)
 
 #----------------------------------------------------end---------------------------------------------#
 
