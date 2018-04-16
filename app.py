@@ -91,7 +91,6 @@ def callback():
 def handle_text_message(event):
     text_raw = event.message.text
     text = text_raw.lower()
-    text_split=text.split()
     profile = line_bot_api.get_profile(event.source.user_id)
 
     if isinstance(event.source, SourceUser):
@@ -113,7 +112,7 @@ def handle_text_message(event):
         sendInfo(event.reply_token)
 
     elif text == 'set admin' :
-        administrators.append(profile.display_name)
+        administrators.append(profile)
         send(event.reply_token, "Admin Set!")
                                                          
     elif text == 'profile':
@@ -121,7 +120,7 @@ def handle_text_message(event):
             line_bot_api.reply_message(event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
-        else: ## if this is personal chat
+        else: ## if this is not personal chat
             line_bot_api.reply_message(  event.reply_token,
                                          TextMessage(text="Bot can't use profile API without user ID"))
 
@@ -156,14 +155,15 @@ def handle_text_message(event):
 ##                                                       TextSendMessage(text=profile.picture_url)])
 
     elif text == 'admin mode':
-        buttons_template = ButtonsTemplate(
-            title='ADMIN_MODE', text='Commands', actions=[
-                PostbackTemplateAction(label='Users', data=':send user'),
-                PostbackTemplateAction(label='Send User Log', data='send'),
-                #MessageTemplateAction(label='Translate Rice', text='米')
-                ])
-        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
+        if profile in administrators :
+            buttons_template = ButtonsTemplate(
+                title='ADMIN_MODE', text='Commands', actions=[
+                    PostbackTemplateAction(label='Users', data=':send user'),
+                    PostbackTemplateAction(label='Send User Log', data='send'),
+                    #MessageTemplateAction(label='Translate Rice', text='米')
+                    ])
+            template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+            line_bot_api.reply_message(event.reply_token, template_message)
 ##        
 ##    elif text == 'carousel':
 ##        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
@@ -226,7 +226,7 @@ def handle_text_message(event):
 
     elif text[0:len('echo:')] == 'echo:':
         toRepeat = text_raw.split(':')[1]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toRepeat))
+        send(event.reply_token, toRepeat)
 
     elif echo : ##if echo == True / switchen on
         if profile.display_name in hist.keys() :
@@ -235,13 +235,12 @@ def handle_text_message(event):
             hist[profile.display_name] = text_raw
             
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_raw))
-        
-            
+              
     elif text in sapaan or 'selamat' in text.lower().split() :
         if 'natal' in text :
             pass
         else :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
+            send(event.reply_token, text.capitalize() + ' juga :D')
 
     elif 'send mail to ' in text : #send mail to <<email>> , <<message>>
         try :
@@ -257,7 +256,7 @@ def handle_text_message(event):
             server.sendmail(sender,receiver, messages)
             server.quit()
 
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Messsage Sended'))
+            line_bot_api.reply_message(event.reply_token, TextMessage(text='Message Sended'))
             
         except Exception as e:
             now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
@@ -300,7 +299,7 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
 
     elif text[:len('wiki sum')] == 'wiki sum': #wiki sub <<text>>
-        to_search = text[len('wiki sum')+1:]
+        to_search = text_raw[len('wiki sum')+1:]
         try :
             texti = wikipedia.summary(to_search)
         except wikipedia.exceptions.DisambiguationError :
@@ -308,17 +307,11 @@ def handle_text_message(event):
         except Exception as e :
             texti = e
         
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=texti))
+        send(event.reply_token, texti)
 
-        
-    elif ':' in text and isinstance(event.source, SourceUser):
+    elif ':' in text and isinstance(event.source, SourceUser): ##admin mode prototype
         try : 
-            if text[:len('send')] == 'send' : #send:<<name>> #to show user's input
-                key = text_raw[text_raw.find(':')+1:]
-                hist_to_send = hist[key]
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
-
-            elif 'clear' in text : # (note/hist/bugreport/administrators):clear
+            if 'clear' in text : # (note/hist/bugreport/administrators):clear
                 ob_to_clear = text[0:text.find(':')]
                 exec('{}.clear()'.format(ob_to_clear))
                 line_bot_api.reply_message(event.reply_token,
@@ -345,7 +338,7 @@ def handle_text_message(event):
                 send(event.reply_token, '\n'.join(administrators))
                 
         except Exception as e :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
+            send(event.reply_token, e)
 
     elif text[:len('apakah')] == 'apakah' :
         yesorno = [ 'Ya' , 'Tidak' ]
@@ -359,30 +352,15 @@ def handle_text_message(event):
             kejaib[last_copy] = random.choice(yesorno)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
 
-    elif 'count' in text :
-        try :
-            a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
-            numerik = ''
-            for i in text :
-                try :
-                    numerik += str(int(i))
-                except :
-                    pass
-                
-            number = int(numerik)
-            for i in range(number,0,-1) :
-                a += "TextSendMessage(text='Count : {}' ),".format(str(i))
-            else :
-                a = a[:-1] + "])"
-                
-            exec(a)
-            
-        except Exception as e:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
-            
+    elif "newKey" in text_raw :
+        toCreate = text_raw[len('newKey')+1:text.find(' as ')]
+        theKey = text_raw[text.find(' as ')+4:]
+        keys[theKey] = toCreate
+        send(event.reply_token, "I'll try to remember that :)")
+
     else :
         
-        if text in profile.display_name :
+        if text_raw in profile.display_name :
             if isinstance(event.source, SourceUser):
                 line_bot_api.reply_message(  event.reply_token,
                                             [TextSendMessage( text= profile.display_name + ', Let\'s Join NewbieWorks...' ),
@@ -570,6 +548,7 @@ sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
 note = []
 kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
+keys = {}
 hist = {}
 bugreport = []
 administrators = []
@@ -611,7 +590,7 @@ and Other Command Coming up soon
 (if my master not too busy watching anime)
 
 admin :
-{} '''.format('\n'.join(administrators))    
+{} '''.format('\n'.join(administrators.display_name))    
     send(pass1, display)
 
 #----------------------------------------------------end---------------------------------------------#
