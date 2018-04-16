@@ -110,14 +110,15 @@ def handle_text_message(event):
             
 
     if text in ('info','help','/help','keywords','keyword') :
-        sendInfo()
+        sendInfo(event.reply_token)
 
     elif text == 'set admin' :
         administrators.append(profile.display_name)
+        send(event.reply_token, "Admin Set!")
                                                          
     elif text == 'profile':
         if isinstance(event.source, SourceUser): ## if this is personal chat
-            line_bot_api.reply_message(  event.reply_token,
+            line_bot_api.reply_message(event.reply_token,
                                         [TextSendMessage( text='Display Name: ' + profile.display_name    ),
                                          TextSendMessage( text='Status : '      + profile.status_message  )] )
         else: ## if this is personal chat
@@ -126,7 +127,7 @@ def handle_text_message(event):
 
     elif text == 'sleep' :
         sleep(5)
-        send("I've sleep for 5 second")
+        send(event.reply_token, "I've sleep for 5 second")
 
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
@@ -338,10 +339,10 @@ def handle_text_message(event):
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
 
             elif text == ':bugreport' :
-                send('\n'.join(bugreport))
+                send(event.reply_token, '\n'.join(bugreport))
 
             elif text == ':administrators' :
-                send('\n'.join(administrators))
+                send(event.reply_token, '\n'.join(administrators))
                 
         except Exception as e :
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
@@ -574,10 +575,10 @@ bugreport = []
 administrators = []
 birthdayList = [('Nathanael', 22, 9, 1999)]
 
-def send(toSend):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toSend))
+def send(pass1, toSend):
+    line_bot_api.reply_message(pass1, TextSendMessage(text=toSend))
 
-def sendInfo():
+def sendInfo(pass1):
     display = '''[[~Command for 9S~]]
 ====NewbieWorks====
 I Learn New Command Everyday ~~
@@ -611,7 +612,7 @@ and Other Command Coming up soon
 
 admin :
 {} '''.format('\n'.join(administrators))    
-    send(display)
+    send(pass1, display)
 
 #----------------------------------------------------end---------------------------------------------#
 
