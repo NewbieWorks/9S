@@ -148,6 +148,17 @@ admin :
 
     elif text == 'set admin' :
         administrators.append(profile.display_name)
+	
+	elif text[0] = "!" :
+		toConsider = text[1:].split(" ")
+		
+		if toConsider[0] == "add" :
+			add[toConsider[1]] = toConsider[2]
+			line_bot_api.reply_message( event.reply_token,
+                                         TextMessage(text="I've record " + toConsider[1] + " as an answer for " + toConsider[2]))
+		else:
+			line_bot_api.reply_message(  event.reply_token,
+                                         TextMessage(text="wait, wut ?"))
                                                          
     elif text == 'profile':
         if isinstance(event.source, SourceUser):
@@ -603,6 +614,7 @@ sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
 echo = False
 note = []
 kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
+add = {}
 hist = {}
 bugreport = []
 administrators = []
