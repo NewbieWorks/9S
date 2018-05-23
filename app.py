@@ -1,11 +1,24 @@
-from __future__ import unicode_literals
+# -*- coding: utf-8 -*-
 
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License. You may obtain
+#  a copy of the License at
+#
+#       https://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+
+
+from __future__ import unicode_literals
 
 import errno
 import os
 import sys
 import tempfile
-
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -27,15 +40,7 @@ from linebot.models import (
     ImageMessage, VideoMessage, AudioMessage, FileMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
-
-from time import gmtime, strftime, sleep
-import pytz
-from datetime import datetime
-import string
-import random
-import smtplib as s
-import wikipedia
-import dropbox
+import time
 
 app = Flask(__name__)
 
@@ -52,9 +57,6 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
-dropboxAcc = os.getenv('DROPBOX_ACCESS_TOKEN', None)
-servant = dropbox.Dropbox(dropboxAcc)
-
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 
@@ -67,7 +69,7 @@ def make_static_tmp_dir():
             pass
         else:
             raise
-           
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -89,363 +91,141 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    text_raw = event.message.text
-    text = text_raw.lower()
-    text_split=text.split()
-    profile = line_bot_api.get_profile(event.source.user_id)
+    text = event.message.text
 
-    if isinstance(event.source, SourceUser):
-        WITA = pytz.timezone('Asia/Makassar')
-        waktu = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
-                                                     str(datetime.now(WITA).minute),
-                                                     str(datetime.now(WITA).second),
-                                                     str(datetime.now(WITA).month) ,
-                                                     str(datetime.now(WITA).day) ,
-                                                     str(datetime.now(WITA).year))
-        
-        if profile.display_name in hist.keys() :
-            hist[profile.display_name] += '\n{} : {}'.format(waktu,text_raw)
-        else :
-            hist[profile.display_name] = '{} : {}'.format(waktu,text_raw)
-            
-
-    if text in ('info','help','/help','keywords','keyword') :
-        display ='''[[~Command for 9S~]]
-====NewbieWorks====
-I Learn New Command Everyday ~~
-
-here's some command :
-
-Profile :
-send your display name and status message
-
-Bye :
-remove 9S from Group or Room
-
-Echo switch (on/off) :
-turn (on/off) the echo
-
-Send mail to <<email>> , <<message>> :
-send the message to email from NewbieWorksLineBot@gmail.com
-
-Time :
-the answer for 'What time is it?'
-
-Apakah <<question>> ? :
-Mirrored from Kerang Ajaib bot
-
-Info :
-show 9S's Commands
-
-
-and Other Command Coming up soon
-(if my master not too busy watching anime)
-
-admin :
-{} '''.format('\n'.join(administrators))
-        
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
-
-    elif text == 'set admin' :
-        administrators.append(profile.display_name)
-	
-	elif text[0] = "!" :
-		toConsider = text[1:].split(" ")
-		
-		if toConsider[0] == "add" :
-			add[toConsider[1]] = toConsider[2]
-			line_bot_api.reply_message( event.reply_token,
-                                         TextMessage(text="I've record " + toConsider[1] + " as an answer for " + toConsider[2]))
-		else:
-			line_bot_api.reply_message(  event.reply_token,
-                                         TextMessage(text="wait, wut ?"))
-                                                         
-    elif text == 'profile':
+    if text == 'profile':
         if isinstance(event.source, SourceUser):
-            line_bot_api.reply_message(  event.reply_token,
-                                        [TextSendMessage( text='Display Name: ' + profile.display_name    ),
-                                         TextSendMessage( text='Status : '      + profile.status_message  )] )
+            profile = line_bot_api.get_profile(event.source.user_id)
+            line_bot_api.reply_message(
+                event.reply_token, [
+                    TextSendMessage(
+                        text='Display Name: ' + profile.display_name
+                    ),
+                    TextSendMessage(
+                        text='Status : ' + profile.status_message
+                    )
+                ]
+            )
         else:
-            line_bot_api.reply_message(  event.reply_token,
-                                         TextMessage(text="Bot can't use profile API without user ID"))
-    elif text == 'sleep' :
-        sleep(5)
-        line_bot_api.reply_message(  event.reply_token,
-                                         TextMessage(text="I've sleep for 5 second"))
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Bot can't use profile API without user ID"))
+            
     elif text == 'bye':
         if isinstance(event.source, SourceGroup):
-            line_bot_api.reply_message(event.reply_token,
-                                       TextMessage(text='I\'ll be back ....'))
-            text_message = TextSendMessage(text='so sad ._.')
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text='I\'ll be back ....'))
+            text_message = TextSendMessage(text='testers!')
             line_bot_api.leave_group(event.source.group_id)
         elif isinstance(event.source, SourceRoom):
-            line_bot_api.reply_message( event.reply_token, TextMessage(text='Fine!') )
-            line_bot_api.leave_room(event.source.room_id) 
+            line_bot_api.reply_message(
+                event.reply_token, TextMessage(text='Fine'))
+            line_bot_api.leave_room(event.source.room_id)
         else:
-            line_bot_api.reply_message( event.reply_token,
-                                        TextMessage(text="Leave me yourself, this is 1:1 chat ..."))
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextMessage(text="Leave me yourself"))
             
-##    elif text == 'confirm':
-##        confirm_template = ConfirmTemplate(text='Do it?',
-##                                           actions=[MessageTemplateAction(label='Yes', text='Yes!'),
-##                                                    MessageTemplateAction(label='No', text='No!'), ])
-##        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''',
-##                                               template=confirm_template)
-##        line_bot_api.reply_message(event.reply_token, template_message)
-##        
+    elif text == 'confirm':
+        confirm_template = ConfirmTemplate(text='Do it?', actions=[
+            MessageTemplateAction(label='Yes', text='Yes!'),
+            MessageTemplateAction(label='No', text='No!'),
+        ])
+        template_message = TemplateSendMessage(
+            alt_text='''YoRHa's Request''', template=confirm_template)
+        line_bot_api.reply_message(event.reply_token, template_message)
 ##    elif text == 'view profiles' :
 ##        profile = line_bot_api.get_group_member_profile(group_id, user_id)
-##        line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=profile.display_name),
-##                                                       TextSendMessage(text=profile.user_id),
-##                                                       TextSendMessage(text=profile.picture_url)])
-##
-    elif text == 'admin mode':
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.display_name))
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.user_id))
+##        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=profile.picture_url))
+    elif (text.split())[0] == 'sendto' :
+        lineID = (text.split())[1]
+        message = (text.split())[2]
+        try:
+            target = client._client.findContactByUserid(lineID)
+            c = LineContact(client, target)
+            c.sendMessage(message)
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Error'))
+            
+    elif text == 'buttons':
         buttons_template = ButtonsTemplate(
-            title='ADMIN_MODE', text='Commands', actions=[
-                PostbackTemplateAction(label='Users', data=':send user'),
-                PostbackTemplateAction(label='Send User Log', data='send'),
-                #MessageTemplateAction(label='Translate Rice', text='米')
-                ])
-        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
+            title='My buttons sample', text='Hello, my buttons', actions=[
+                URITemplateAction(
+                    label='Go to line.me', uri='https://line.me'),
+                PostbackTemplateAction(label='ping', data='ping'),
+                PostbackTemplateAction(
+                    label='ping with text', data='ping',
+                    text='ping'),
+                MessageTemplateAction(label='Translate Rice', text='米')
+            ])
+        template_message = TemplateSendMessage(
+            alt_text='''YoRHa's Request''', template=buttons_template)
         line_bot_api.reply_message(event.reply_token, template_message)
-##        
-##    elif text == 'carousel':
-##        carousel_template = CarouselTemplate(columns=[CarouselColumn(text='hoge1',
-##                                                                     title='fuga1',
-##                                                                     actions=[URITemplateAction(label='Go to line.me' ,
-##                                                                                                uri='https://line.me'),
-##                                                                              PostbackTemplateAction(label='ping',
-##                                                                                                     data='ping')   ]
-##                                                                     ),
-##                                                      CarouselColumn(text='hoge2',
-##                                                                     title='fuga2',
-##                                                                     actions=[PostbackTemplateAction(label='ping with text',
-##                                                                                                     data='ping',
-##                                                                                                     text='ping'),
-##                                                                              MessageTemplateAction(label='Translate Rice',
-##                                                                                                    text='米')]),])
-##        template_message = TemplateSendMessage(alt_text='Carousel alt text',
-##                                               template=carousel_template)
-##        
-##        line_bot_api.reply_message(event.reply_token, template_message)
-##        
-##    elif text == 'image_carousel':
-##        image_carousel_template = ImageCarouselTemplate(columns=
-##                                                            [ImageCarouselColumn
-##                                                                (image_url='https://via.placeholder.com/1024x1024',
-##                                                                 action=DatetimePickerTemplateAction
-##                                                                    (label='datetime',
-##                                                                     data='datetime_postback',
-##                                                                     mode='datetime')
-##                                                                 ) ,
-##                                                             ImageCarouselColumn
-##                                                                (image_url='https://via.placeholder.com/1024x1024',
-##                                                                 action=DatetimePickerTemplateAction
-##                                                                    (label='date',
-##                                                                     data='date_postback',
-##                                                                     mode='date')
-##                                                                 )
-##                                                             ]
-##                                                        )
+        
+    elif text == 'carousel':
+        carousel_template = CarouselTemplate(columns=[
+            CarouselColumn(text='hoge1', title='fuga1', actions=[
+                URITemplateAction(
+                    label='Go to line.me', uri='https://line.me'),
+                PostbackTemplateAction(label='ping', data='ping')
+            ]),
+            CarouselColumn(text='hoge2', title='fuga2', actions=[
+                PostbackTemplateAction(
+                    label='ping with text', data='ping',
+                    text='ping'),
+                MessageTemplateAction(label='Translate Rice', text='米')
+            ]),
+        ])
+        template_message = TemplateSendMessage(
+            alt_text='Carousel alt text', template=carousel_template)
+        line_bot_api.reply_message(event.reply_token, template_message)
+    elif text == 'image_carousel':
+        image_carousel_template = ImageCarouselTemplate(columns=[
+            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
+                                action=DatetimePickerTemplateAction(label='datetime',
+                                                                    data='datetime_postback',
+                                                                    mode='datetime')),
+            ImageCarouselColumn(image_url='https://via.placeholder.com/1024x1024',
+                                action=DatetimePickerTemplateAction(label='date',
+                                                                    data='date_postback',
+                                                                    mode='date'))
+        ])
+        template_message = TemplateSendMessage(
+            alt_text='ImageCarousel alt text', template=image_carousel_template)
+        line_bot_api.reply_message(event.reply_token, template_message)
+    elif text == 'imagemap':
+        pass
+    elif text == 'YoRHa' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='For the Glory of Mankind'))
+    elif text == '@emi[L]' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
+    elif text.lower() == ('hai' or 'hello' or 'pagi' or 'pagii' or 'malam' or 'siang') or ('selamat' in text.lower()) :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + 'juga :D'))
+    elif text == 'info' :
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
+                                                                      profile\n\
+                                                                      bye\n\
+                                                                      confirm (RAW)\n\
+                                                                      sendto (ERROR)\n\
+                                                                      buttons (RAW)\n\
+                                                                      carousel (RAW) \n\
+                                                                      image_carousel (RAW) \n\
+                                                                      imagemap (RAW) \n\
+                                                                      YoRHa \n\
+                                                                      @emi[L] \n\
+                                                                      info (Untested'))
+##    elif text == 'echo on' :
+##        echi_switch(on
+##    else:
+##        line_bot_api.reply_message(
+##            event.reply_token, TextSendMessage(text=event.message.text))
 ##
-##        template_message = TemplateSendMessage(alt_text='ImageCarousel alt text',
-##                                               template=image_carousel_template)
-##        
-##        line_bot_api.reply_message(event.reply_token, template_message)
+##def echo_switch(settings) :
+##    
 ##
-            
-    elif 'echo switch' in text: # echo switch (on/off)
-        global echo
-        if 'on' in text :
-            echo = False
-        elif 'off' in text :
-            echo  = True
-        
-        if echo :
-            echo = False
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo Off'))
-        else :
-            echo = True
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Echo On'))
-
-    elif text[0:len('echo:')] == 'echo:':
-        toRepeat = text_raw.split(':')[1]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=toRepeat))
-
-    elif echo : ##if echo == True / switchen on
-        if profile.display_name in hist.keys() :
-            hist[profile.display_name] += '\n{}'.format(text_raw)
-        else :
-            hist[profile.display_name] = text_raw
-            
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_raw))
-        
-            
-    elif text in sapaan or 'selamat' in text.lower().split() :
-        if 'natal' in text :
-            pass
-        else :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text.capitalize() + ' juga :D'))
-
-    elif 'send mail to ' in text : #send mail to <<email>> , <<message>>
-        try :
-            messages = text.split(',')[1]
-            sender = 'newbieworkslinebot@gmail.com'
-            password = 'nathanaelX1'
-            receiver = text.split(',')[0][len('send mail to '):-1]
-
-            server = s.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(sender,password)
-            
-            server.sendmail(sender,receiver, messages)
-            server.quit()
-
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Messsage Sended'))
-            
-        except Exception as e:
-            now = str(datetime.now(pytz.utc).year) + '-' + str(datetime.now(pytz.utc).month) + '-' + str(datetime.now(pytz.utc).day)
-            bugreport.append((profile.display_name,now,e))
-            line_bot_api.reply_message(event.reply_token, TextMessage(text='Error : {}'.format(e)))
-                
-
-    elif text == 'time' or text == 'what time is it?':
-        WIB = pytz.timezone('Asia/Jakarta')
-        WITA = pytz.timezone('Asia/Makassar')
-        WIT = pytz.timezone('Asia/Jayapura')
-        
-        nowWIB = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIB).hour),
-                                                        str(datetime.now(WIB).minute),
-                                                        str(datetime.now(WIB).second),
-                                                        str(datetime.now(WIB).month) ,
-                                                        str(datetime.now(WIB).day) ,
-                                                        str(datetime.now(WIB).year))
-        
-        nowWITA = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WITA).hour),
-                                                         str(datetime.now(WITA).minute),
-                                                         str(datetime.now(WITA).second),
-                                                         str(datetime.now(WITA).month) ,
-                                                         str(datetime.now(WITA).day) ,
-                                                         str(datetime.now(WITA).year))
-        
-        nowWIT = '{:0>2}:{:0>2}:{:0>2} {}/{}/{}'.format(str(datetime.now(WIT).hour),
-                                                        str(datetime.now(WIT).minute),
-                                                        str(datetime.now(WIT).second),
-                                                        str(datetime.now(WIT).month) ,
-                                                        str(datetime.now(WIT).day) ,
-                                                        str(datetime.now(WIT).year))
-        
-        line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text='{:<6s} : {}\n{:<6s}: {}\n{:<6s} : {}'.format('WIB',nowWIB,'WITA',nowWITA,'WIT',nowWIT)))
-
-    elif text[0] == 'note' and text[4] == ':' and isinstance(event.source, SourceGroup) : #note:<<text>>
-        global note
-        note.append(text[text.find(':'):])
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='noted'))
-
-    elif text[:len('wiki sum')] == 'wiki sum': #wiki sub <<text>>
-        to_search = text[len('wiki sum')+1:]
-        try :
-            texti = wikipedia.summary(to_search)
-        except wikipedia.exceptions.DisambiguationError :
-            texti = '{} disambiguation:\n'.format(to_search) + '\n'.join(wikipedia.search(to_search))
-        except Exception as e :
-            texti = e
-        
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=texti))
-
-        
-    elif ':' in text and isinstance(event.source, SourceUser):
-        try : 
-            if text[:len('send')] == 'send' : #send:<<name>> #to show user's input
-                key = text_raw[text_raw.find(':')+1:]
-                hist_to_send = hist[key]
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
-
-            elif 'clear' in text : # (note/hist/bugreport/administrators):clear
-                ob_to_clear = text[0:text.find(':')]
-                exec('{}.clear()'.format(ob_to_clear))
-                line_bot_api.reply_message(event.reply_token,
-                                           TextSendMessage(text='{} has been cleared'.format(ob_to_clear)))
-
-            elif text[:len('note:remove')] == 'note:remove' : #note:remove
-                index = text[13:]
-                line_bot_api.reply_message(event.reply_token,
-                                            [TextSendMessage(text='removing : ' + note[int(index)-1]),
-                                             TextSendMessage(text='removed')])
-                note.pop(int(index)-1)
-                                           
-            elif text[:len('release')] == 'release': #release <<index>>
-                try :
-                    index = text[8:]
-                except :
-                    index = '0'
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text=note[int(index)-1]))
-
-            elif text == ':bugreport' :
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(bugreport)))
-
-            elif text == ':administrators' :
-                line_bot_api.reply_message(event.reply_token, TextSendMessage(text='\n'.join(administrators)))
-                
-        except Exception as e :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
-
-    elif text[:len('apakah')] == 'apakah' :
-        yesorno = [ 'Ya' , 'Tidak' ]
-        last_copy = ''
-        for char in text :
-            if char not in string.punctuation and char != ' ' :
-                last_copy += char
-        if last_copy in kejaib.keys() :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
-        else :
-            kejaib[last_copy] = random.choice(yesorno)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=kejaib[last_copy]))
-
-    elif 'count' in text :
-        try :
-            a = "line_bot_api.reply_message(event.reply_token,[ TextSendMessage(text='<<Counting to {}>>'.format(str(number))),"
-            numerik = ''
-            for i in text :
-                try :
-                    numerik += str(int(i))
-                except :
-                    pass
-                
-            number = int(numerik)
-            for i in range(number,0,-1) :
-                a += "TextSendMessage(text='Count : {}' ),".format(str(i))
-            else :
-                a = a[:-1] + "])"
-                
-            exec(a)
-            
-        except Exception as e:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=e))
-            
-    else :
-        
-        if text in profile.display_name :
-            if isinstance(event.source, SourceUser):
-                line_bot_api.reply_message(  event.reply_token,
-                                            [TextSendMessage( text= profile.display_name + ', Let\'s Join NewbieWorks...' ),
-                                             TextSendMessage( text='I\'m my master\'s bot'  ),
-                                             TextSendMessage( text='Part of NewbieWorks'  )] )
-        else :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=exec(text_raw)))
-
-## ------------------project birthday reminder-------------------------------------
-##        elif str(datetime.now(pytz.utc).minute) == '5' :
-##            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='done'))
-
-
-        
-                                
-    
-    
-            
-
 ##@handler.add(MessageEvent, message=LocationMessage)
 ##def handle_location_message(event):
 ##    line_bot_api.reply_message(
@@ -467,8 +247,7 @@ admin :
 ##    )
 ##
 ##
-### Other Message Type      
-##                
+### Other Message Type
 ##@handler.add(MessageEvent, message=(ImageMessage, VideoMessage, AudioMessage))
 ##def handle_content_message(event):
 ##    if isinstance(event.message, ImageMessage):
@@ -519,21 +298,23 @@ admin :
 ##            TextSendMessage(text=request.host_url + os.path.join('static', 'tmp', dist_name))
 ##        ])
 ##
-
-@handler.add(FollowEvent)
-def handle_follow(event):
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text='Got follow event'))
-
-
-@handler.add(UnfollowEvent)
-def handle_unfollow():
-    app.logger.info("Got Unfollow event")
-
+##
+##@handler.add(FollowEvent)
+##def handle_follow(event):
+##    line_bot_api.reply_message(
+##        event.reply_token, TextSendMessage(text='Got follow event'))
+##
+##
+##@handler.add(UnfollowEvent)
+##def handle_unfollow():
+##    app.logger.info("Got Unfollow event")
+##
 
 @handler.add(JoinEvent)
 def handle_join(event):
-    line_bot_api.reply_message( event.reply_token, TextSendMessage(text='Hello :D')) # + event.source.type)) return room / group
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text='Hello :D')) # + event.source.type)) return room / group
 
 
 @handler.add(LeaveEvent)
@@ -543,58 +324,9 @@ def handle_leave():
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
-    if event.postback.data == ':send user':
-        text_to_send = ', '.join(hist.keys())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text_to_send))
-
-    elif event.postback.data == 'send' :
-        people = []
-        for i in hist.keys() :
-            people.append(i)
-        anchor = len(people)
-        
-        if anchor == 1 :
-            buttons_template = ButtonsTemplate(
-                title='User Logs', text='Users :', actions=[
-                    PostbackTemplateAction(label=people[0], data=people[0])
-                    ])
-            
-        elif anchor == 0 :
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text='No User'))
-            
-        elif anchor == 2 :
-            buttons_template = ButtonsTemplate(
-                title='User Logs', text='Users :', actions=[
-                    PostbackTemplateAction(label=people[0], data=people[0]),
-                    PostbackTemplateAction(label=people[1], data=people[1])
-                    ])
-            
-        elif anchor == 3 :
-            buttons_template = ButtonsTemplate(title='User Logs',
-                                               text='Users :',
-                                               actions=[PostbackTemplateAction(label=people[0], data=people[0]),
-                                                        PostbackTemplateAction(label=people[1], data=people[1]),
-                                                        PostbackTemplateAction(label=people[2], data=people[2])
-                                                        ]
-                                               )
-        elif anchor > 3 :
-            buttons_template = ButtonsTemplate(title='User Logs',
-                                               text='Users :',
-                                               actions=[PostbackTemplateAction(label=people[0], data=people[0]),
-                                                        PostbackTemplateAction(label=people[1], data=people[1]),
-                                                        PostbackTemplateAction(label=people[2], data=people[2]),
-                                                        PostbackTemplateAction(label='next', data='send 2'),
-                                                        ]
-                                               )
-
-        template_message = TemplateSendMessage(alt_text='''YoRHa's Request''', template=buttons_template)
-        line_bot_api.reply_message(event.reply_token, template_message)
-
-    elif event.postback.data in hist.keys() :
-        hist_to_send = hist[event.postback.data]
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=hist_to_send))
-    
-
+    if event.postback.data == 'ping':
+        line_bot_api.reply_message(
+            event.reply_token, TextSendMessage(text='pong'))
     elif event.postback.data == 'datetime_postback':
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.postback.params['datetime']))
@@ -605,23 +337,10 @@ def handle_postback(event):
 
 @handler.add(BeaconEvent)
 def handle_beacon(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(
-            text='Got beacon event. hwid={}, device_message(hex string)={}'.format(event.beacon.hwid, event.beacon.dm)))
-#---------------------------------------------built-in-----object------------------------------------#
-sapaan = ('hai' , 'hello', 'pagi', 'malam', 'siang')
-echo = False
-note = []
-kejaib = {'apakahya':'Tidak', 'apakahtidak':'Ya'}
-add = {}
-hist = {}
-bugreport = []
-administrators = []
-birthdayList = [('Nathanael', 22, 9, 1999)]
-
-#----------------------------------------------------end---------------------------------------------#
-
+    line_bot_api.reply_message( event.reply_token,
+                                TextSendMessage(text='Got beacon event. hwid={}, device_message(hex string)={}'
+                                                .format(event.beacon.hwid, event.beacon.dm)))
+    
 if __name__ == "__main__":
     arg_parser = ArgumentParser(        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'    )
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
@@ -632,7 +351,3 @@ if __name__ == "__main__":
     make_static_tmp_dir()
     
     app.run(host='0.0.0.0', debug=options.debug, port=int(os.environ.get('PORT' , 5000)))
-
-    
-    
-
