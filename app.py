@@ -146,6 +146,25 @@ admin :
         
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=display))
 
+    elif text[0:3] == "kd:" :
+        title = text[3:]
+        if (title == "7 First Kisses") :
+            replyMessage = """[SEVEN FIRST KISSES]
+Link Sharing by 9S
+
+Episode 1 : https://www.youtube.com/watch?v=PUBrXIikG9k
+Episode 2 : https://www.youtube.com/watch?v=_3n3aapyn3g
+Episode 3 : https://www.youtube.com/watch?v=xl6FE4xBx7Y
+Episode 4 : https://www.youtube.com/watch?v=dAr8bxgHhvo
+Episode 5 : https://www.youtube.com/watch?v=fzoQJSAYvLY
+Episode 6 : https://www.youtube.com/watch?v=-wkXXkFPcJ4
+Episode 7 : https://www.youtube.com/watch?v=qXGf2VAHw28
+Episode 8 : https://www.youtube.com/watch?v=jv37Kt5u8WI
+
+~ End at Eps 8 ~"""
+        line_bot_api.reply_message(event.reply_token, 
+            TextMessage(text=replyMessage))
+
     elif text == 'set admin' :
         administrators.append(profile.display_name)
 	
