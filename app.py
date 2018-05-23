@@ -204,6 +204,21 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Summoned...'))
     elif text.lower() == ('hai' or 'hello' or 'pagi' or 'pagii' or 'malam' or 'siang') or ('selamat' in text.lower()) :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=text + 'juga :D'))
+	elif text == '7 First Kisses' :
+		tosend = '''[SEVEN FIRST KISSES]
+Link Sharing by 9S
+
+Episode 1 : https://www.youtube.com/watch?v=PUBrXIikG9k
+Episode 2 : https://www.youtube.com/watch?v=_3n3aapyn3g
+Episode 3 : https://www.youtube.com/watch?v=xl6FE4xBx7Y
+Episode 4 : https://www.youtube.com/watch?v=dAr8bxgHhvo
+Episode 5 : https://www.youtube.com/watch?v=fzoQJSAYvLY
+Episode 6 : https://www.youtube.com/watch?v=-wkXXkFPcJ4
+Episode 7 : https://www.youtube.com/watch?v=qXGf2VAHw28
+Episode 8 : https://www.youtube.com/watch?v=jv37Kt5u8WI
+
+~ End at Eps 8 ~'''
+		line_bot_api.reply_message(event.reply_token, TextSendMessage(text=tosend))
     elif text == 'info' :
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='still in development, here\'s some command :\n \
                                                                       profile\n\
